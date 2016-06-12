@@ -1,0 +1,30 @@
+{
+  "name": "olivant",
+  "description": "Echo the destruction caused by your code.",
+  "main": "olivant.js",
+  "authors": [
+    "Richeve S. Bebedor <richeve.bebedor@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "echo",
+    "prompt",
+    "fatal",
+    "issue",
+    "warning",
+    "failed",
+    "success",
+    "logging",
+    "log",
+    "console",
+    "olivant"
+  ],
+  "homepage": "https://github.com/volkovasystems/olivant",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

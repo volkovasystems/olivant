@@ -1,0 +1,32 @@
+{
+  "name": "olivant",
+  "version": "0.0.0",
+  "description": "Echo the destruction caused by your code.",
+  "main": "olivant.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/volkovasystems/olivant.git"
+  },
+  "keywords": [
+    "echo",
+    "prompt",
+    "fatal",
+    "issue",
+    "warning",
+    "failed",
+    "success",
+    "logging",
+    "log",
+    "console",
+    "olivant"
+  ],
+  "author": "Richeve S. Bebedor <richeve.bebedor@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/volkovasystems/olivant/issues"
+  },
+  "homepage": "https://github.com/volkovasystems/olivant#readme"
+}
