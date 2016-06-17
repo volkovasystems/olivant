@@ -498,7 +498,7 @@ Olivant.create( "Issue", {
 	"level": 8
 } );
 
-Olivant.create( "Error", {
+Olivant.create( "Bug", {
 	"name": ERROR,
 	"status": ERROR,
 	"code": ERROR_CODE,
