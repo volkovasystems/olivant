@@ -28,5 +28,19 @@
   "bugs": {
     "url": "https://github.com/volkovasystems/olivant/issues"
   },
-  "homepage": "https://github.com/volkovasystems/olivant#readme"
+  "homepage": "https://github.com/volkovasystems/olivant#readme",
+  "dependencies": {
+    "asea": "0.0.1",
+    "called": "0.0.4",
+    "diatom": "0.0.9",
+    "ethernity": "0.0.7",
+    "excursio": "0.0.1",
+    "harden": "^0.3.2",
+    "meek": "0.0.0",
+    "outre": "0.0.1",
+    "raze": "0.0.4",
+    "stacktrace-js": "^1.3.0",
+    "symbiote": "0.0.2",
+    "u200b": "0.0.7"
+  }
 }

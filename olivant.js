@@ -84,7 +84,6 @@ if( typeof window != "undefined" &&
 	throw new Error( "asea is not defined" );
 }
 
-
 if( asea.client &&
 	!( "called" in window ) )
 {
@@ -162,6 +161,8 @@ harden( "FATAL", "fatal" );
 harden( "FATAL_CODE", 500 );
 harden( "ISSUE", "issue" );
 harden( "ISSUE_CODE", 500 );
+harden( "ERROR", "error" );
+harden( "ERROR_CODE", 500 );
 harden( "FAILED", "failed" );
 harden( "FAILED_CODE", 403 );
 harden( "WARNING", "warning" );
@@ -173,8 +174,22 @@ harden( "PROMPT_CODE", 200 );
 harden( "SUCCESS", "success" );
 harden( "SUCCESS_CODE", 200 );
 
-Olivant.prototype.initialize = function initialize( option, callback ){
-	callback = called( callback );
+Olivant.prototype.initialize = function initialize( option ){
+	this.set( );
+
+	this.getTrace( );
+
+	if( typeof arguments[ 0 ] == "string" ){
+		this.remind.apply( this, raze( arguments ) );
+
+		return this;
+	}
+
+	return this;
+};
+
+Olivant.prototype.set = function set( option ){
+	option = option || { };
 
 	this.name = option.name || this.name || ECHO
 
@@ -186,9 +201,18 @@ Olivant.prototype.initialize = function initialize( option, callback ){
 
 	this.log = option.log || this.log || console.log;
 
-	this.silent = option.silent || this.silent || true;
+	this.silent = ( "silent" in option )? option.silent :
+		( "silent" in this )? this.silent :
+		true;
 
-	this.getTrace( );
+	//: Level dictates refined settings of this procedure.
+	this.level = ( "level" in option )? option.level :
+		( "level" in this )? this.level :
+		+this.silent;
+
+	//: Level is only from 1-0 or 1-2345-6789-0.
+	//: Level 2 is deep silent level.
+	this.level = this.level % 10;
 
 	return this;
 };
@@ -197,10 +221,14 @@ Olivant.prototype.toString = function toString( ){
 	return this.getMessage( );
 };
 
+Olivant.prototype.valueOf = function valueOf( ){
+	return this.getMessage( );
+};
+
 /*:
 	@method-documentation:
 		The message consist of three layer of strings,
-			1. timestamp
+			1. timestamp in true time format
 			2. actual readable message
 			3. message trace
 
@@ -213,7 +241,7 @@ Olivant.prototype.getMessage = function getMessage( ){
 	var timestamp = Ethernity( ).persist( );
 	composition.push( timestamp );
 
-	var message = U200b( outre( [ this.name, this.status, this.message ] ) ).join( " " );
+	var message = U200b( outre( [ this.name, this.status, this.message ] ) ).join( ", " );
 	composition.push( message );
 
 	var stack = "stack trace not ready";
@@ -236,7 +264,7 @@ Olivant.prototype.getMessage = function getMessage( ){
 		stack = "stack trace is not available on silent mode";
 		composition.push( stack );
 
-	}else{
+	}else if( this.level > 5 ){
 		composition.push( stack );
 	}
 
@@ -246,6 +274,13 @@ Olivant.prototype.getMessage = function getMessage( ){
 };
 
 Olivant.prototype.getTrace = function getTrace( callback ){
+	if( this.level == 2 ){
+		this.remind( "tracing is disabled for level 2" )
+			.prompt( );
+
+		return this;
+	}
+
 	callback = called( callback );
 
 	trace
@@ -280,7 +315,9 @@ Olivant.prototype.setLog = function setLog( log ){
 };
 
 /*:
-
+	@method-documentation:
+		Send data to server or client.
+	@end-method-documentation
 */
 Olivant.prototype.send = function send( ){
 	/*:
@@ -291,6 +328,13 @@ Olivant.prototype.send = function send( ){
 			}
 		@end-meta-configuration
 	*/
+
+	if( this.level == 2 ){
+		this.remind( "sending is disabled for level 2" )
+			.prompt( );
+
+		return this;
+	}
 
 	var message = meek( this.status, this.getMessage( ) );
 
@@ -308,7 +352,19 @@ Olivant.prototype.send = function send( ){
 	return this;
 };
 
+/*:
+	@method-documentation:
+		Stream data to listeners.
+	@end-method-documentation
+*/
 Olivant.prototype.report = function report( ){
+	if( this.level == 2 ){
+		this.remind( "reporting is disabled for level 2" )
+			.prompt( );
+
+		return this;
+	}
+
 	if( asea.server ){
 		excursio.bind( this )
 			( function procedure( ){
@@ -338,6 +394,11 @@ Olivant.prototype.report = function report( ){
 	return this;
 };
 
+/*:
+	@method-documentation:
+		Append messages to the current message.
+	@end-method-documentation
+*/
 Olivant.prototype.remind = function remind( ){
 	if( !arguments.length ){
 		return this;
@@ -359,20 +420,131 @@ Olivant.prototype.remind = function remind( ){
 			}
 		} )
 		.concat( [ this.message ] ) )
-		.join( " " );
-
-	this.getTrace( );
+		.join( ", " );
 
 	this.report( );
 
 	return this;
 };
 
+/*:
+	@method-documentation:
+		Log the data.
+	@end-method-documentation
+*/
 Olivant.prototype.prompt = function prompt( ){
 	this.remind.apply( this, raze( arguments ) );
 
-	
+	if( this.level == 2 ){
+		this.log( this.getMessage( ) );
+
+		return this;
+	}
+
+	if( this.stack ){
+		this.log( this.getMessage( ) );
+
+	}else{
+		this.getTrace( ( function onTrace( error, stack ){
+			if( !error && stack ){
+				this.stack = stack;
+
+				this.log( this.getMessage( ) );
+
+			}else{
+				this.log( this.getMessage( ) );
+			}
+		} ).bind( this ) );
+	}
+
+	return this;
 };
+
+harden( "create", function create( name, option ){
+	var Clone = diatom( name );
+	Clone = heredito( Clone, Olivant );
+
+	Clone.prototype.initialize = option.initialize ||
+		function initialize( ){
+			this.name = option.name;
+
+			this.status = option.status;
+
+			this.code = option.code;
+
+			this.silent = option.silent;
+
+			this.level = option.level;
+		};
+
+	symbiote( Clone );
+
+	harden( name, Clone );
+}, Olivant );
+
+Olivant.create( "Fatal", {
+	"name": FATAL,
+	"status": ERROR,
+	"code": FATAL_CODE,
+	"silent": false,
+	"level": 9
+} );
+
+Olivant.create( "Issue", {
+	"name": ISSUE,
+	"status": ERROR,
+	"code": ISSUE_CODE,
+	"silent": false,
+	"level": 8
+} );
+
+Olivant.create( "Error", {
+	"name": ERROR,
+	"status": ERROR,
+	"code": ERROR_CODE,
+	"silent": false,
+	"level": 7
+} );
+
+Olivant.create( "Warning", {
+	"name": WARNING,
+	"status": FAILED,
+	"code": WARNING_CODE,
+	"silent": false,
+	"level": 6
+} );
+
+Olivant.create( "Failed", {
+	"name": FAILED,
+	"status": FAILED,
+	"code": FAILED_CODE,
+	"silent": false,
+	"level": 6
+} );
+
+Olivant.create( "Prompt", {
+	"name": PROMPT,
+	"status": PROMPT,
+	"code": PROMPT_CODE,
+	"silent": false,
+	"level": 5
+} );
+
+Olivant.create( "Echo", {
+	"name": ECHO,
+	"status": ECHO,
+	"code": ECHO_CODE,
+	"silent": true,
+	"level": 4
+} );
+
+Olivant.create( "Success", {
+	"name": SUCCESS,
+	"status": SUCCESS,
+	"code": SUCCESS_CODE,
+	"silent": true,
+	"level": 3
+} );
 
 if( asea.server ){
 	module.exports = Olivant;
