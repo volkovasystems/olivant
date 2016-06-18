@@ -464,6 +464,11 @@ harden( "create", function create( name, option ){
 	var Clone = diatom( name );
 	Clone = heredito( Clone, Olivant );
 
+	Clone.prototype.name = option.name;
+	Clone.prototype.status = option.status;
+	Clone.prototype.code = option.code;
+	Clone.prototype.silent = option.silent;
+	Clone.prototype.level = option.level;
 	Clone.prototype.initialize = option.initialize ||
 		function initialize( ){
 			this.name = option.name;
@@ -487,7 +492,13 @@ Olivant.create( "Fatal", {
 	"status": ERROR,
 	"code": FATAL_CODE,
 	"silent": false,
-	"level": 9
+	"level": 9,
+	"initialize": function initialize( ){
+		this.prompt( );
+		this.report( )
+
+		return this;
+	};
 } );
 
 Olivant.create( "Issue", {
@@ -527,7 +538,12 @@ Olivant.create( "Prompt", {
 	"status": PROMPT,
 	"code": PROMPT_CODE,
 	"silent": false,
-	"level": 5
+	"level": 5,
+	"initialize": function initialize( ){
+		this.prompt( );
+
+		return this;
+	};
 } );
 
 Olivant.create( "Echo", {
