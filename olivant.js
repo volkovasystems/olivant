@@ -498,7 +498,7 @@ Olivant.create( "Fatal", {
 		this.report( )
 
 		return this;
-	};
+	}
 } );
 
 Olivant.create( "Issue", {
@@ -543,7 +543,7 @@ Olivant.create( "Prompt", {
 		this.prompt( );
 
 		return this;
-	};
+	}
 } );
 
 Olivant.create( "Echo", {
