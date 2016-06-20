@@ -76,6 +76,7 @@ if( typeof window == "undefined" ){
 	var symbiote = require( "symbiote" );
 	var trace = require( "stacktrace-js" );
 	var U200b = require( "u200b" );
+	var util = require( "util" );
 }
 
 if( typeof window != "undefined" &&
