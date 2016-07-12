@@ -77,6 +77,7 @@ if( typeof window == "undefined" ){
 	var trace = require( "stacktrace-js" );
 	var U200b = require( "u200b" );
 	var util = require( "util" );
+	var chalk = require( "chalk" );
 }
 
 if( typeof window != "undefined" &&
@@ -206,24 +207,28 @@ Olivant.prototype.set = function set( option ){
 		( "silent" in this )? this.silent :
 		true;
 
-	//: Level dictates refined settings of this procedure.
-	this.level = ( "level" in option )? option.level :
-		( "level" in this )? this.level :
+	//: Depth dictates refined settings of this procedure.
+	this.depth = ( "depth" in option )? option.depth :
+		( "depth" in this )? this.depth :
 		+this.silent;
 
-	//: Level is only from 1-0 or 1-2345-6789-0.
-	//: Level 2 is deep silent level.
-	this.level = this.level % 10;
+	//: Depth is only from 1-0 or 1-2345-6789-0.
+	//: Depth 2 is deep silent depth.
+	this.depth = this.depth % 10;
+
+	if( asea.server ){
+		this.color = option.color || this.color || chalk.white;
+	}
 
 	return this;
 };
 
 Olivant.prototype.toString = function toString( ){
-	return this.getMessage( );
+	return U200b( outre( [ this.name, this.status, this.message ] ) ).join( ", " );
 };
 
 Olivant.prototype.valueOf = function valueOf( ){
-	return this.getMessage( );
+	return U200b( outre( [ this.name, this.status, this.message ] ) ).join( ", " );
 };
 
 /*:
@@ -240,14 +245,21 @@ Olivant.prototype.getMessage = function getMessage( ){
 	var composition = [ ];
 
 	var timestamp = Ethernity( ).persist( );
+	if( asea.server ){
+		timestamp = chalk.dim( timestamp );
+	}
 	composition.push( timestamp );
 
 	var message = U200b( outre( [ this.name, this.status, this.message ] ) ).join( ", " );
+	if( asea.server ){
+		message = this.color( message );
+	}
 	composition.push( message );
 
 	var stack = "stack trace not ready";
 	if( !this.silent &&
-		this.stack )
+		Array.isArray( this.stack ) &&
+		this.stack.length )
 	{
 		stack = this.stack || stack;
 
@@ -259,13 +271,23 @@ Olivant.prototype.getMessage = function getMessage( ){
 			stack = U200b( stack ).join( "\n" );
 		}
 
+		if( asea.server ){
+			stack = chalk.dim.red( stack );
+		}
+
 		composition.push( stack );
 
 	}else if( this.silent ){
 		stack = "stack trace is not available on silent mode";
+		if( asea.server ){
+			stack = chalk.dim( stack );
+		}
 		composition.push( stack );
 
-	}else if( this.level > 5 ){
+	}else if( this.depth > 5 ){
+		if( asea.server ){
+			stack = chalk.dim( stack );
+		}
 		composition.push( stack );
 	}
 
@@ -275,8 +297,8 @@ Olivant.prototype.getMessage = function getMessage( ){
 };
 
 Olivant.prototype.getTrace = function getTrace( callback ){
-	if( this.level == 2 ){
-		this.remind( "tracing is disabled for level 2" )
+	if( this.depth == 2 ){
+		this.remind( "tracing is disabled for depth 2" )
 			.prompt( );
 
 		return this;
@@ -330,8 +352,8 @@ Olivant.prototype.send = function send( ){
 		@end-meta-configuration
 	*/
 
-	if( this.level == 2 ){
-		this.remind( "sending is disabled for level 2" )
+	if( this.depth == 2 ){
+		this.remind( "sending is disabled for depth 2" )
 			.prompt( );
 
 		return this;
@@ -359,38 +381,50 @@ Olivant.prototype.send = function send( ){
 	@end-method-documentation
 */
 Olivant.prototype.report = function report( ){
-	if( this.level == 2 ){
-		this.remind( "reporting is disabled for level 2" )
+	if( this.depth == 2 ){
+		this.remind( "reporting is disabled for depth 2" )
 			.prompt( );
 
 		return this;
 	}
 
-	if( asea.server ){
-		excursio.bind( this )
-			( function procedure( ){
-				/*!
-					process.nextTick( function onTick( ){
-						process.emit( this.name, this );
-					}.bind( this ) );
-				*/
-			} );
+	if( this.timeout ){
+		clearTimeout( this.timeout );
 
-	}else if( asea.client ){
-		excursio.bind( this )
-			( function procedure( ){
-				/*!
-					var timeout = setTimeout( ( function onTimeout( ){
-						var event = new Event( this.name );
-						event.data = this;
-
-						document.dispatchEvent( event );
-
-						clearTimeout( timeout );
-					} ).bind( this ) );
-				*/
-			} );
+		delete this.timeout;
 	}
+
+	this.timeout = setTimeout( ( function onTimeout( ){
+		if( asea.server ){
+			excursio.bind( this )
+				( function procedure( ){
+					/*!
+						process.nextTick( function onTick( ){
+							process.emit( this.name, this );
+						}.bind( this ) );
+					*/
+				} );
+
+		}else if( asea.client ){
+			excursio.bind( this )
+				( function procedure( ){
+					/*!
+						var timeout = setTimeout( ( function onTimeout( ){
+							var event = new Event( this.name );
+							event.data = this;
+
+							document.dispatchEvent( event );
+
+							clearTimeout( timeout );
+						} ).bind( this ) );
+					*/
+				} );
+		}
+
+		clearTimeout( this.timeout );
+
+		delete this.timeout;
+	} ).bind( this ), 1000 );
 
 	return this;
 };
@@ -420,7 +454,10 @@ Olivant.prototype.remind = function remind( ){
 				return parameter
 			}
 		} )
-		.concat( [ this.message ] ) )
+		.concat( [ this.message ] )
+		.filter( function onEachMessage( message ){
+			return !!message;
+		} ) )
 		.join( ", " );
 
 	this.report( );
@@ -436,13 +473,15 @@ Olivant.prototype.remind = function remind( ){
 Olivant.prototype.prompt = function prompt( ){
 	this.remind.apply( this, raze( arguments ) );
 
-	if( this.level == 2 ){
+	if( this.depth == 2 ){
 		this.log( this.getMessage( ) );
 
 		return this;
 	}
 
-	if( this.stack ){
+	if( Array.isArray( this.stack ) &&
+		this.stack.length )
+	{
 		this.log( this.getMessage( ) );
 
 	}else{
@@ -469,7 +508,8 @@ harden( "create", function create( name, option ){
 	Clone.prototype.status = option.status;
 	Clone.prototype.code = option.code;
 	Clone.prototype.silent = option.silent;
-	Clone.prototype.level = option.level;
+	Clone.prototype.depth = option.depth;
+	Clone.prototype.color = option.color;
 	Clone.prototype.initialize = option.initialize ||
 		function initialize( ){
 			this.name = option.name;
@@ -480,7 +520,7 @@ harden( "create", function create( name, option ){
 
 			this.silent = option.silent;
 
-			this.level = option.level;
+			this.depth = option.depth;
 		};
 
 	symbiote( Clone );
@@ -493,7 +533,8 @@ Olivant.create( "Fatal", {
 	"status": ERROR,
 	"code": FATAL_CODE,
 	"silent": false,
-	"level": 9,
+	"depth": 9,
+	"color": ( asea.server? chalk.red : null ),
 	"initialize": function initialize( ){
 		this.prompt( );
 		this.report( )
@@ -507,7 +548,8 @@ Olivant.create( "Issue", {
 	"status": ERROR,
 	"code": ISSUE_CODE,
 	"silent": false,
-	"level": 8
+	"depth": 8,
+	"color": ( asea.server? chalk.red : null )
 } );
 
 Olivant.create( "Bug", {
@@ -515,7 +557,8 @@ Olivant.create( "Bug", {
 	"status": ERROR,
 	"code": ERROR_CODE,
 	"silent": false,
-	"level": 7
+	"depth": 7,
+	"color": ( asea.server? chalk.red : null )
 } );
 
 Olivant.create( "Warning", {
@@ -523,7 +566,8 @@ Olivant.create( "Warning", {
 	"status": FAILED,
 	"code": WARNING_CODE,
 	"silent": false,
-	"level": 6
+	"depth": 6,
+	"color": ( asea.server? chalk.yellow : null )
 } );
 
 Olivant.create( "Failed", {
@@ -531,15 +575,17 @@ Olivant.create( "Failed", {
 	"status": FAILED,
 	"code": FAILED_CODE,
 	"silent": false,
-	"level": 6
+	"depth": 6,
+	"color": ( asea.server? chalk.yellow : null )
 } );
 
 Olivant.create( "Prompt", {
 	"name": PROMPT,
 	"status": PROMPT,
 	"code": PROMPT_CODE,
-	"silent": false,
-	"level": 5,
+	"silent": true,
+	"depth": 5,
+	"color": ( asea.server? chalk.blue : null ),
 	"initialize": function initialize( ){
 		this.prompt( );
 
@@ -552,7 +598,7 @@ Olivant.create( "Echo", {
 	"status": ECHO,
 	"code": ECHO_CODE,
 	"silent": true,
-	"level": 4
+	"depth": 4
 } );
 
 Olivant.create( "Success", {
@@ -560,7 +606,8 @@ Olivant.create( "Success", {
 	"status": SUCCESS,
 	"code": SUCCESS_CODE,
 	"silent": true,
-	"level": 3
+	"depth": 3,
+	"color": ( asea.server? chalk.green : null )
 } );
 
 if( asea.server ){

@@ -1,6 +1,6 @@
 {
   "name": "olivant",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "Echo the destruction caused by your code.",
   "main": "olivant.js",
   "scripts": {
@@ -32,15 +32,16 @@
   "dependencies": {
     "asea": "0.0.2",
     "called": "0.0.5",
+    "chalk": "^1.1.3",
     "diatom": "0.0.10",
-    "ethernity": "0.0.8",
+    "ethernity": "0.0.10",
     "excursio": "0.0.2",
     "harden": "^0.3.2",
     "meek": "0.0.1",
     "outre": "0.0.2",
     "raze": "0.0.5",
     "stacktrace-js": "^1.3.0",
-    "symbiote": "0.0.3",
-    "u200b": "0.0.8"
+    "symbiote": "^0.1.0",
+    "u200b": "0.0.10"
   }
 }
