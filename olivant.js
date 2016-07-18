@@ -1,6 +1,6 @@
 "use strict";
 
-/*:
+/*;
 	@module-license:
 		The MIT License (MIT)
 		@mit-license
@@ -53,6 +53,7 @@
 			"Ethernity": "ethernity",
 			"excursio": "excursio",
 			"harden": "harden",
+			"heredito": "heredito",
 			"meek": "meek"
 			"outre": "outre",
 			"raze": "raze",
@@ -70,6 +71,7 @@ if( typeof window == "undefined" ){
 	var Ethernity = require( "ethernity" );
 	var excursio = require( "excursio" );
 	var harden = require( "harden" );
+	var heredito = require( "heredito" );
 	var meek = require( "meek" );
 	var outre = require( "outre" );
 	var raze = require( "raze" );
@@ -114,6 +116,12 @@ if( asea.client &&
 	!( "harden" in window ) )
 {
 	throw new Error( "harden is not defined" );
+}
+
+if( asea.client &&
+	!( "heredito" in window ) )
+{
+	throw new Error( "heredito is not defined" );
 }
 
 if( asea.client &&
@@ -231,7 +239,7 @@ Olivant.prototype.valueOf = function valueOf( ){
 	return U200b( outre( [ this.name, this.status, this.message ] ) ).join( ", " );
 };
 
-/*:
+/*;
 	@method-documentation:
 		The message consist of three layer of strings,
 			1. timestamp in true time format
@@ -322,7 +330,7 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 	return this;
 };
 
-/*:
+/*;
 	@method-documentation:
 		This will let us set the logging function.
 	@end-method-documentation
@@ -337,13 +345,13 @@ Olivant.prototype.setLog = function setLog( log ){
 	return this;
 };
 
-/*:
+/*;
 	@method-documentation:
 		Send data to server or client.
 	@end-method-documentation
 */
 Olivant.prototype.send = function send( ){
-	/*:
+	/*;
 		@meta-configuration:
 			{
 				"response": "http.ServerResponse",
@@ -375,7 +383,7 @@ Olivant.prototype.send = function send( ){
 	return this;
 };
 
-/*:
+/*;
 	@method-documentation:
 		Stream data to listeners.
 	@end-method-documentation
@@ -401,7 +409,7 @@ Olivant.prototype.report = function report( ){
 					/*!
 						process.nextTick( function onTick( ){
 							process.emit( this.name, this );
-						}.bind( this ) );
+						}.bind( this ) )
 					*/
 				} );
 
@@ -416,7 +424,7 @@ Olivant.prototype.report = function report( ){
 							document.dispatchEvent( event );
 
 							clearTimeout( timeout );
-						} ).bind( this ) );
+						} ).bind( this ) )
 					*/
 				} );
 		}
@@ -429,7 +437,7 @@ Olivant.prototype.report = function report( ){
 	return this;
 };
 
-/*:
+/*;
 	@method-documentation:
 		Append messages to the current message.
 	@end-method-documentation
@@ -465,7 +473,7 @@ Olivant.prototype.remind = function remind( ){
 	return this;
 };
 
-/*:
+/*;
 	@method-documentation:
 		Log the data.
 	@end-method-documentation

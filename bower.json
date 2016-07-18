@@ -32,14 +32,15 @@
     "stacktrace-js": "^1.3.0",
     "asea": "^0.0.2",
     "called": "^0.0.5",
-    "diatom": "^0.0.10",
-    "excursio": "^0.0.2",
     "harden": "^0.3.2",
     "meek": "^0.0.1",
     "outre": "^0.0.2",
     "raze": "^0.0.5",
-    "u200b": "^0.0.10",
-    "ethernity": "^0.0.10",
-    "symbiote": "^0.1.0"
+    "excursio": "^0.0.4",
+    "heredito": "^0.6.0",
+    "u200b": "^0.0.12",
+    "diatom": "^0.2.1",
+    "ethernity": "^0.0.12",
+    "symbiote": "^0.2.0"
   }
 }
