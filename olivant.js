@@ -314,16 +314,28 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 
 	callback = called( callback );
 
+	var timeout = setTimeout( function onTimeout( ){
+		callback( );
+	}, 1000 );
+
 	trace
 		.get( )
 
 		.then( ( function onGetTrace( frameList ){
+			if( timeout ){
+				clearTimeout( timeout );
+			}
+
 			this.stack = frameList;
 
 			callback( null, this.stack );
 		} ).bind( this ) )
 
 		.catch( function onError( error ){
+			if( timeout ){
+				clearTimeout( timeout );
+			}
+
 			callback( this.remind( error ) );
 		} );
 
