@@ -49,6 +49,7 @@
 		{
 			"asea": "asea",
 			"called": "called",
+			"chalk": "chalk",
 			"diatom": "diatom",
 			"Ethernity": "ethernity",
 			"excursio": "excursio",
@@ -56,6 +57,7 @@
 			"heredito": "heredito",
 			"meek": "meek"
 			"outre": "outre",
+			"plough": "plough",
 			"raze": "raze",
 			"symbiote": "symbiote",
 			"trace": "stacktrace-js",
@@ -67,6 +69,7 @@
 if( typeof window == "undefined" ){
 	var asea = require( "asea" );
 	var called = require( "called" );
+	var chalk = require( "chalk" );
 	var diatom = require( "diatom" );
 	var Ethernity = require( "ethernity" );
 	var excursio = require( "excursio" );
@@ -74,12 +77,12 @@ if( typeof window == "undefined" ){
 	var heredito = require( "heredito" );
 	var meek = require( "meek" );
 	var outre = require( "outre" );
+	var plough = require( "plough" );
 	var raze = require( "raze" );
 	var symbiote = require( "symbiote" );
 	var trace = require( "stacktrace-js" );
 	var U200b = require( "u200b" );
 	var util = require( "util" );
-	var chalk = require( "chalk" );
 }
 
 if( typeof window != "undefined" &&
@@ -189,10 +192,16 @@ Olivant.prototype.initialize = function initialize( option ){
 
 	this.getTrace( );
 
-	if( typeof arguments[ 0 ] == "string" ){
-		this.remind.apply( this, raze( arguments ) );
+	if( arguments[ 0 ] instanceof Olivant ){
+		this.set( arguments[ 0 ] );
 
-		return this;
+	}else if( arguments[ 0 ].toString( ).match( /Arguments/ ) &&
+		typeof arguments[ 0 ] == "object" )
+	{
+		this.remind.apply( this, plough( raze( arguments[ 0 ] ) ) );
+
+	}else if( typeof arguments[ 0 ] == "string" ){
+		this.remind.apply( this, raze( arguments ) );
 	}
 
 	return this;
@@ -227,6 +236,8 @@ Olivant.prototype.set = function set( option ){
 	if( asea.server ){
 		this.color = option.color || this.color || chalk.white;
 	}
+
+	this.message = option.message || this.message || "";
 
 	return this;
 };
