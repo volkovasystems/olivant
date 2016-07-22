@@ -390,7 +390,7 @@ Olivant.prototype.send = function send( ){
 		return this;
 	}
 
-	var message = meek( this.status, this.toString( ) );
+	var message = meek( this.status, U200b( this.toString( ) ).raw( ) );
 
 	if( asea.server ){
 		var response = arguments[ 0 ];
