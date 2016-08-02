@@ -50,6 +50,7 @@
 			"asea": "asea",
 			"called": "called",
 			"chalk": "chalk",
+			"dexist": "dexist",
 			"diatom": "diatom",
 			"Ethernity": "ethernity",
 			"excursio": "excursio",
@@ -71,6 +72,7 @@ if( typeof window == "undefined" ){
 	var called = require( "called" );
 	var chalk = require( "chalk" );
 	var diatom = require( "diatom" );
+	var dexist = require( "dexist" );
 	var Ethernity = require( "ethernity" );
 	var excursio = require( "excursio" );
 	var harden = require( "harden" );
@@ -568,7 +570,11 @@ Olivant.create( "Fatal", {
 	"color": ( asea.server? chalk.red : null ),
 	"initialize": function initialize( ){
 		this.prompt( );
-		this.report( )
+		this.report( );
+
+		if( asea.server ){
+			dexist( "node" );
+		}
 
 		return this;
 	}
