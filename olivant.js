@@ -60,6 +60,8 @@
 			"outre": "outre",
 			"plough": "plough",
 			"raze": "raze",
+			"snapd": "snapd",
+			"segway": "segway",
 			"symbiote": "symbiote",
 			"trace": "stacktrace-js",
 			"U200b": "u200b"
@@ -81,6 +83,8 @@ if( typeof window == "undefined" ){
 	var outre = require( "outre" );
 	var plough = require( "plough" );
 	var raze = require( "raze" );
+	var snapd = require( "snapd" );
+	var segway = require( "segway" );
 	var symbiote = require( "symbiote" );
 	var trace = require( "stacktrace-js" );
 	var U200b = require( "u200b" );
@@ -145,6 +149,12 @@ if( asea.client &&
 	!( "raze" in window ) )
 {
 	throw new Error( "raze is not defined" );
+}
+
+if( asea.client &&
+	!( "snapd" in window ) )
+{
+	throw new Error( "snapd is not defined" );
 }
 
 if( asea.client &&
@@ -394,7 +404,21 @@ Olivant.prototype.send = function send( ){
 
 	var message = meek( this.status, U200b( this.toString( ) ).raw( ) );
 
-	if( asea.server ){
+	if( asea.server &&
+		this.redirected )
+	{
+		var response = arguments[ 0 ];
+
+		segway( {
+			"response": response,
+			"path": this.path,
+			"status": this.code,
+			"data": message,
+		} );
+
+		this.redirected = false;
+
+	}else if( asea.server ){
 		var response = arguments[ 0 ];
 
 		message.send( response, this.code );
@@ -427,37 +451,23 @@ Olivant.prototype.report = function report( ){
 		delete this.timeout;
 	}
 
-	this.timeout = setTimeout( ( function onTimeout( ){
-		if( asea.server ){
-			excursio.bind( this )
-				( function procedure( ){
-					/*!
-						process.nextTick( function onTick( ){
-							process.emit( this.name, this );
-						}.bind( this ) )
-					*/
-				} );
+	if( asea.server ){
+		this.timeout = snapd.bind( this )( function emitReport( ){
+			process.emit( this.name, this );
 
-		}else if( asea.client ){
-			excursio.bind( this )
-				( function procedure( ){
-					/*!
-						var timeout = setTimeout( ( function onTimeout( ){
-							var event = new Event( this.name );
-							event.data = this;
+			delete this.timeout;
+		}, 1000 );
 
-							document.dispatchEvent( event );
+	}else if( asea.client ){
+		this.timeout = snapd.bind( this )( function emitReport( ){
+			var event = new Event( this.name );
+			event.data = this;
 
-							clearTimeout( timeout );
-						} ).bind( this ) )
-					*/
-				} );
-		}
+			document.dispatchEvent( event );
 
-		clearTimeout( this.timeout );
-
-		delete this.timeout;
-	} ).bind( this ), 1000 );
+			delete this.timeout;
+		}, 1000 );
+	}
 
 	return this;
 };
@@ -554,6 +564,30 @@ Olivant.prototype.prompt = function prompt( ){
 
 	return this;
 };
+
+/*;
+	@method-documentation:
+		Set the redirection configuration.
+
+		This will trigger redirect response when send is called.
+	@end-method-documentation
+*/
+if( asea.server ){
+	Olivant.prototype.redirect = function redirect( path ){
+		/*;
+			@meta-configuration:
+				{
+					"path:required": "string"
+				}
+			@end-meta-configuration
+		*/
+
+		this.redirected = true;
+		this.path = path;
+
+		return this;
+	};
+}
 
 harden( "create", function create( name, option ){
 	var Clone = diatom( name );
