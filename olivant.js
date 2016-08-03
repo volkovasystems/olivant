@@ -53,7 +53,6 @@
 			"dexist": "dexist",
 			"diatom": "diatom",
 			"Ethernity": "ethernity",
-			"excursio": "excursio",
 			"harden": "harden",
 			"heredito": "heredito",
 			"meek": "meek"
@@ -76,7 +75,6 @@ if( typeof window == "undefined" ){
 	var diatom = require( "diatom" );
 	var dexist = require( "dexist" );
 	var Ethernity = require( "ethernity" );
-	var excursio = require( "excursio" );
 	var harden = require( "harden" );
 	var heredito = require( "heredito" );
 	var meek = require( "meek" );
@@ -113,12 +111,6 @@ if( asea.client &&
 	!( "Ethernity" in window ) )
 {
 	throw new Error( "Ethernity is not defined" );
-}
-
-if( asea.client &&
-	!( "excursio" in window ) )
-{
-	throw new Error( "excursio is not defined" );
 }
 
 if( asea.client &&
