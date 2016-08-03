@@ -476,7 +476,10 @@ Olivant.prototype.remind = function remind( ){
 
 	this.message = U200b( raze( arguments )
 		.map( function onEachParameter( parameter ){
-			if( typeof parameter == "string" ||
+			if( parameter instanceof Olivant ){
+				return parameter.message;
+
+			}else if( typeof parameter == "string" ||
 				typeof parameter == "number" ||
 				typeof parameter == "boolean" )
 			{
