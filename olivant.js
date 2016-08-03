@@ -500,6 +500,28 @@ Olivant.prototype.remind = function remind( ){
 
 /*;
 	@method-documentation:
+		Silence the logging capabilities.
+	@end-method-documentation
+*/
+Olivant.prototype.silence = function silence( ){
+	this.silent = true;
+
+	return this;
+};
+
+/*;
+	@method-documentation:
+		Deactivate silence.
+	@end-method-documentation
+*/
+Olivant.prototype.shout = function shout( ){
+	this.silent = false;
+
+	return this;
+};
+
+/*;
+	@method-documentation:
 		Log the data.
 	@end-method-documentation
 */
