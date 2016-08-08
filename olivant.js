@@ -48,6 +48,7 @@
 	@include:
 		{
 			"asea": "asea",
+			"blacksea": "blacksea",
 			"called": "called",
 			"chalk": "chalk",
 			"dexist": "dexist",
@@ -55,10 +56,12 @@
 			"Ethernity": "ethernity",
 			"harden": "harden",
 			"heredito": "heredito",
+			"http": "http",
 			"meek": "meek"
 			"outre": "outre",
 			"plough": "plough",
 			"raze": "raze",
+			"redsea": "redsea",
 			"snapd": "snapd",
 			"segway": "segway",
 			"symbiote": "symbiote",
@@ -70,6 +73,7 @@
 
 if( typeof window == "undefined" ){
 	var asea = require( "asea" );
+	var blacksea = require( "blacksea" );
 	var called = require( "called" );
 	var chalk = require( "chalk" );
 	var diatom = require( "diatom" );
@@ -77,10 +81,12 @@ if( typeof window == "undefined" ){
 	var Ethernity = require( "ethernity" );
 	var harden = require( "harden" );
 	var heredito = require( "heredito" );
+	var http = require( "http" );
 	var meek = require( "meek" );
 	var outre = require( "outre" );
 	var plough = require( "plough" );
 	var raze = require( "raze" );
+	var redsea = require( "redsea" );
 	var snapd = require( "snapd" );
 	var segway = require( "segway" );
 	var symbiote = require( "symbiote" );
@@ -191,12 +197,22 @@ harden( "PROMPT_CODE", 200 );
 harden( "SUCCESS", "success" );
 harden( "SUCCESS_CODE", 200 );
 
+harden( "REDIRECT", "redirect" );
+
 Olivant.prototype.initialize = function initialize( option ){
-	this.set( );
+	if( typeof option == "object" ){
+		this.set( option );
+
+	}else{
+		this.set( );
+	}
 
 	this.getTrace( );
 
-	if( arguments[ 0 ] instanceof Olivant ){
+	if( arguments.length == 0 ){
+		return this;
+
+	}else if( arguments[ 0 ] instanceof Olivant ){
 		this.set( arguments[ 0 ] );
 
 	}else if( arguments[ 0 ].toString( ).match( /Arguments/ ) &&
@@ -220,8 +236,6 @@ Olivant.prototype.set = function set( option ){
 
 	this.code = option.code || this.code || ECHO_CODE;
 
-	this.stack = option.stack || this.stack || [ ];
-
 	this.log = option.log || this.log || console.log;
 
 	this.silent = ( "silent" in option )? option.silent :
@@ -241,7 +255,57 @@ Olivant.prototype.set = function set( option ){
 		this.color = option.color || this.color || chalk.white;
 	}
 
+	this.state = "";
+
+	this.timeout = this.timeout || { };
+	if( this.timeout ){
+		for( var timeout in this.timeout ){
+			clearTimeout( this.timeout[ timeout ] );
+
+			delete this.timeout[ timeout ];
+		}
+	}
+
+	this.stack = option.stack || this.stack || [ ];
+
 	this.message = option.message || this.message || "";
+
+	if( asea.server ){
+		redsea( this );
+
+		blacksea( this );
+	}
+
+	return this;
+};
+
+Olivant.prototype.reset = function reset( option, renew ){
+	if( typeof option == "function" &&
+		typeof option.prototype == "object" &&
+		option.prototype instanceof Olivant )
+	{
+		var logEngine = option;
+
+		if( renew ){
+			var data = {
+				"message": this.message,
+				"stack": this.stack
+			};
+
+			return logEngine( data );
+
+		}else{
+			this.set( logEngine.prototype );
+		}
+
+	}else if( typeof option == "object" ){
+		this.set( option );
+
+	}else{
+		this.reset( Issue, true )
+			.silence( )
+			.prompt( "cannot reset to given option", option );
+	}
 
 	return this;
 };
@@ -267,7 +331,7 @@ Olivant.prototype.valueOf = function valueOf( ){
 Olivant.prototype.getMessage = function getMessage( ){
 	var composition = [ ];
 
-	var timestamp = Ethernity( ).persist( );
+	var timestamp = Ethernity( ).printTime( true );
 	if( asea.server ){
 		timestamp = chalk.dim( timestamp );
 	}
@@ -327,18 +391,26 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 		return this;
 	}
 
+	if( this.timeout.getTrace ){
+		return this;
+	}
+
 	callback = called( callback );
 
-	var timeout = setTimeout( function onTimeout( ){
+	this.timeout.getTrace = snapd.bind( this )( function onTimeout( ){
+		delete this.timeout.getTrace;
+
 		callback( );
-	}, 1000 );
+	}, 1000 ).timeout;
 
 	trace
 		.get( )
 
 		.then( ( function onGetTrace( frameList ){
-			if( timeout ){
-				clearTimeout( timeout );
+			if( this.timeout.getTrace ){
+				clearTimeout( this.timeout.getTrace );
+
+				delete this.timeout.getTrace;
 			}
 
 			this.stack = frameList;
@@ -347,8 +419,10 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 		} ).bind( this ) )
 
 		.catch( function onError( error ){
-			if( timeout ){
-				clearTimeout( timeout );
+			if( this.timeout.getTrace ){
+				clearTimeout( this.timeout.getTrace );
+
+				delete this.timeout.getTrace;
 			}
 
 			callback( this.remind( error ) );
@@ -364,7 +438,11 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 */
 Olivant.prototype.setLog = function setLog( log ){
 	if( typeof log != "function" ){
-		throw new Error( "invalid log method" );
+		this.reset( Issue, true )
+			.silence( )
+			.prompt( "invalid log function", log );
+
+		return this;
 	}
 
 	this.log = log;
@@ -396,29 +474,56 @@ Olivant.prototype.send = function send( ){
 
 	var message = meek( this.status, U200b( this.toString( ) ).raw( ) );
 
-	if( asea.server &&
-		this.redirected )
-	{
-		var response = arguments[ 0 ];
+	var procedure = arguments[ 0 ];
 
+	if( asea.server &&
+		this.state == REDIRECT &&
+		this.path &&
+		procedure instanceof http.ServerResponse )
+	{
 		segway( {
-			"response": response,
+			"response": procedure,
 			"path": this.path,
 			"status": this.code,
 			"data": message,
 		} );
 
-		this.redirected = false;
+		this.state = "";
 
-	}else if( asea.server ){
-		var response = arguments[ 0 ];
+	}else if( asea.server &&
+		!this.state &&
+		procedure instanceof http.ServerResponse )
+	{
+		message.send( procedure, this.code );
 
-		message.send( response, this.code );
+	}else if( asea.client &&
+		this.state == REDIRECT &&
+		this.path )
+	{
+		segway( {
+			"path": this.path,
+			"status": this.code,
+			"data": message,
+		} );
 
-	}else if( asea.client ){
-		var procedure = arguments[ 0 ];
+		this.state = "";
 
+	}else if( asea.client &&
+		!this.state &&
+		typeof procedure == "function" )
+	{
 		message.send.bind( this )( procedure );
+
+	}else if( this.state == REDIRECT ){
+		this.reset( Issue, true )
+			.silence( )
+			.prompt( "cannot redirect properly" )
+			.send( procedure );
+
+	}else{
+		this.reset( Issue, true )
+			.silence( )
+			.prompt( "cannot send properly" );
 	}
 
 	return this;
@@ -437,29 +542,25 @@ Olivant.prototype.report = function report( ){
 		return this;
 	}
 
-	if( this.timeout ){
-		clearTimeout( this.timeout );
+	if( this.timeout.report ){
+		clearTimeout( this.timeout.report );
 
-		delete this.timeout;
+		delete this.timeout.report;
 	}
 
-	if( asea.server ){
-		this.timeout = snapd.bind( this )( function emitReport( ){
+	this.timeout.report = snapd.bind( this )( function emitReport( ){
+		if( asea.server ){
 			process.emit( this.name, this );
 
-			delete this.timeout;
-		}, 1000 );
-
-	}else if( asea.client ){
-		this.timeout = snapd.bind( this )( function emitReport( ){
+		}else if( asea.client ){
 			var event = new Event( this.name );
 			event.data = this;
 
 			document.dispatchEvent( event );
+		}
 
-			delete this.timeout;
-		}, 1000 );
-	}
+		delete this.timeout.report;
+	}, 1000 ).timeout;
 
 	return this;
 };
@@ -533,29 +634,39 @@ Olivant.prototype.shout = function shout( ){
 Olivant.prototype.prompt = function prompt( ){
 	this.remind.apply( this, raze( arguments ) );
 
-	if( this.depth == 2 ){
-		this.log( this.getMessage( ) );
+	if( this.timeout.prompt ){
+		clearTimeout( this.timeout.prompt );
 
-		return this;
+		delete this.timeout.prompt;
 	}
 
-	if( Array.isArray( this.stack ) &&
-		this.stack.length )
-	{
-		this.log( this.getMessage( ) );
+	this.timeout.prompt = snapd.bind( this )( function onTimeout( ){
+		if( this.depth == 2 ){
+			this.log( this.getMessage( ) );
 
-	}else{
-		this.getTrace( ( function onTrace( error, stack ){
-			if( !error && stack ){
-				this.stack = stack;
+			return this;
+		}
 
-				this.log( this.getMessage( ) );
+		if( Array.isArray( this.stack ) &&
+			this.stack.length )
+		{
+			this.log( this.getMessage( ) );
 
-			}else{
-				this.log( this.getMessage( ) );
-			}
-		} ).bind( this ) );
-	}
+		}else{
+			this.getTrace( ( function onTrace( error, stack ){
+				if( !error && stack ){
+					this.stack = stack;
+
+					this.log( this.getMessage( ) );
+
+				}else{
+					this.log( this.getMessage( ) );
+				}
+			} ).bind( this ) );
+		}
+
+		delete this.timeout.prompt;
+	} ).timeout;
 
 	return this;
 };
@@ -567,22 +678,31 @@ Olivant.prototype.prompt = function prompt( ){
 		This will trigger redirect response when send is called.
 	@end-method-documentation
 */
-if( asea.server ){
-	Olivant.prototype.redirect = function redirect( path ){
-		/*;
-			@meta-configuration:
-				{
-					"path:required": "string"
-				}
-			@end-meta-configuration
-		*/
+Olivant.prototype.redirect = function redirect( path ){
+	/*;
+		@meta-configuration:
+			{
+				"path:required": "string"
+			}
+		@end-meta-configuration
+	*/
 
-		this.redirected = true;
-		this.path = path;
+	this.state = REDIRECT;
+	this.path = path;
 
-		return this;
-	};
-}
+	if( !this.path &&
+		typeof DEFAULT_REDIRECT_PATH == "string" )
+	{
+		this.path = DEFAULT_REDIRECT_PATH;
+
+	}else{
+		this.reset( Issue, true )
+			.silence( )
+			.prompt( "empty path to be redirected" );
+	}
+
+	return this;
+};
 
 harden( "create", function create( name, option ){
 	var Clone = diatom( name );
