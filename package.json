@@ -1,6 +1,6 @@
 {
   "name": "olivant",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Echo the destruction caused by your code.",
   "main": "olivant.js",
   "scripts": {
@@ -39,7 +39,7 @@
     "ethernity": "^0.1.1",
     "harden": "^0.3.2",
     "heredito": "^0.6.0",
-    "meek": "^0.1.1",
+    "meek": "^0.1.2",
     "outre": "0.0.2",
     "plough": "0.0.2",
     "raze": "0.0.5",
