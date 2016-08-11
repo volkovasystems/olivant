@@ -186,6 +186,8 @@ harden( "ISSUE", "issue" );
 harden( "ISSUE_CODE", 500 );
 harden( "ERROR", "error" );
 harden( "ERROR_CODE", 500 );
+harden( "UNCERTAIN", 404 );
+harden( "UNCERTAIN_CODE", 404 );
 harden( "FAILED", "failed" );
 harden( "FAILED_CODE", 403 );
 harden( "WARNING", "warning" );
@@ -271,9 +273,9 @@ Olivant.prototype.set = function set( option ){
 	this.message = option.message || this.message || "";
 
 	if( asea.server ){
-		redsea( this );
+		redsea( Issue );
 
-		blacksea( this );
+		blacksea( Fatal );
 	}
 
 	return this;
@@ -773,6 +775,15 @@ Olivant.create( "Warning", {
 	"name": WARNING,
 	"status": FAILED,
 	"code": WARNING_CODE,
+	"silent": false,
+	"depth": 6,
+	"color": ( asea.server? chalk.yellow : null )
+} );
+
+Olivant.create( "Uncertain", {
+	"name": UNCERTAIN,
+	"status": FAILED,
+	"code": UNCERTAIN_CODE,
 	"silent": false,
 	"depth": 6,
 	"color": ( asea.server? chalk.yellow : null )
