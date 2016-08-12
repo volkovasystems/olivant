@@ -582,7 +582,9 @@ Olivant.prototype.remind = function remind( ){
 			if( parameter instanceof Error ){
 				return parameter.stack.toString( );
 
-			}else if( parameter.length ){
+			}else if( typeof parameter != "string" &&
+				parameter.length )
+			{
 				parameter = raze( parameter )
 					.map( function onEachParameter( parameter ){
 						if( parameter instanceof Error ){
