@@ -579,7 +579,29 @@ Olivant.prototype.remind = function remind( ){
 
 	this.message = U200b( raze( arguments )
 		.map( function onEachParameter( parameter ){
-			if( parameter instanceof Olivant ){
+			if( parameter instanceof Error ){
+				return parameter.stack.toString( );
+
+			}else if( parameter.length ){
+				parameter = raze( parameter )
+					.map( function onEachParameter( parameter ){
+						if( parameter instanceof Error ){
+							return parameter.stack.toString( );
+
+						}else if( asea.server ){
+							return util.inspect( parameter, { "depth": null } );
+
+						}else if( asea.client ){
+							return parameter.toString( );
+						}
+					} );
+
+				return U200b( parameter
+					.filter( function onEachMessage( message ){
+						return !!message;
+					} ) ).join( ", " );
+
+			}else if( parameter instanceof Olivant ){
 				return parameter.message;
 
 			}else if( typeof parameter == "string" ||
@@ -589,10 +611,10 @@ Olivant.prototype.remind = function remind( ){
 				return parameter;
 
 			}else if( asea.server ){
-				return util.inspect( parameter );
+				return util.inspect( parameter, { "depth": null } );
 
 			}else if( asea.client ){
-				return parameter
+				return parameter.toString( );
 			}
 		} )
 		.concat( [ this.message ] )
