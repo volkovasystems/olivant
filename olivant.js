@@ -54,6 +54,8 @@
 			"dexist": "dexist",
 			"diatom": "diatom",
 			"Ethernity": "ethernity",
+			"EventEmitter": "events",
+			"glucose": "glucose",
 			"harden": "harden",
 			"heredito": "heredito",
 			"http": "http",
@@ -79,6 +81,8 @@ if( typeof window == "undefined" ){
 	var diatom = require( "diatom" );
 	var dexist = require( "dexist" );
 	var Ethernity = require( "ethernity" );
+	var EventEmitter = require( "events" );
+	var glucose = require( "glucose" );
 	var harden = require( "harden" );
 	var heredito = require( "heredito" );
 	var http = require( "http" );
@@ -117,6 +121,12 @@ if( asea.client &&
 	!( "Ethernity" in window ) )
 {
 	throw new Error( "Ethernity is not defined" );
+}
+
+if( asea.client &&
+	!( "glucose" in window ) )
+{
+	throw new Error( "glucose is not defined" );
 }
 
 if( asea.client &&
@@ -180,6 +190,10 @@ if( asea.client &&
 
 var Olivant = diatom( "Olivant" );
 
+if( asea.server ){
+	Olivant = heredito( Olivant, EventEmitter );
+}
+
 harden( "FATAL", "fatal" );
 harden( "FATAL_CODE", 500 );
 harden( "ISSUE", "issue" );
@@ -200,13 +214,18 @@ harden( "SUCCESS", "success" );
 harden( "SUCCESS_CODE", 200 );
 
 harden( "REDIRECT", "redirect" );
+harden( "CONTEXT", "context" );
+harden( "LOG", "log" );
+harden( "SILENT", "silent" );
 
 Olivant.prototype.initialize = function initialize( option ){
-	if( typeof option == "object" ){
-		this.set( option );
+	if( typeof option == "object" &&
+		!arguments[ 0 ].toString( ).match( /Arguments/ ) )
+	{
+		this.load( option );
 
 	}else{
-		this.set( );
+		this.load( );
 	}
 
 	this.getTrace( );
@@ -215,10 +234,10 @@ Olivant.prototype.initialize = function initialize( option ){
 		return this;
 
 	}else if( arguments[ 0 ] instanceof Olivant ){
-		this.set( arguments[ 0 ] );
+		this.load( arguments[ 0 ] );
 
-	}else if( arguments[ 0 ].toString( ).match( /Arguments/ ) &&
-		typeof arguments[ 0 ] == "object" )
+	}else if( typeof arguments[ 0 ] == "object" &&
+		arguments[ 0 ].toString( ).match( /Arguments/ ) )
 	{
 		this.remind.apply( this, plough( raze( arguments[ 0 ] ) ) );
 
@@ -229,8 +248,8 @@ Olivant.prototype.initialize = function initialize( option ){
 	return this;
 };
 
-Olivant.prototype.set = function set( option ){
-	option = option || { };
+Olivant.prototype.load = function load( option ){
+	option = glucose( option );
 
 	this.name = option.name || this.name || ECHO
 
@@ -239,6 +258,10 @@ Olivant.prototype.set = function set( option ){
 	this.code = option.code || this.code || ECHO_CODE;
 
 	this.log = option.log || this.log || console.log;
+
+	if( option.self ){
+		this.context = option.self;
+	}
 
 	this.silent = ( "silent" in option )? option.silent :
 		( "silent" in this )? this.silent :
@@ -281,6 +304,11 @@ Olivant.prototype.set = function set( option ){
 	return this;
 };
 
+/*;
+	@method-documentation:
+		Modifies the log engine while maintaining environment properties.
+	@end-method-documentation
+*/
 Olivant.prototype.reset = function reset( option, renew ){
 	if( typeof option == "function" &&
 		typeof option.prototype == "object" &&
@@ -297,11 +325,11 @@ Olivant.prototype.reset = function reset( option, renew ){
 			return logEngine( data );
 
 		}else{
-			this.set( logEngine.prototype );
+			this.load( logEngine.prototype );
 		}
 
 	}else if( typeof option == "object" ){
-		this.set( option );
+		this.load( option );
 
 	}else{
 		this.reset( Issue, true )
@@ -325,7 +353,7 @@ Olivant.prototype.valueOf = function valueOf( ){
 		The message consist of three layer of strings,
 			1. timestamp in true time format
 			2. actual readable message
-			3. message trace
+			3. message trace or message context
 
 		These information will be divided through zero-width space convention.
 	@end-method-documentation
@@ -378,6 +406,16 @@ Olivant.prototype.getMessage = function getMessage( ){
 			stack = chalk.dim( stack );
 		}
 		composition.push( stack );
+	}
+
+	if( this.context &&
+		this.silent )
+	{
+		stack = "called with context " + this.context.constructor.name;
+		if( asea.server ){
+			stack = chalk.dim( stack );
+		}
+		composition[ 2 ] = stack;
 	}
 
 	composition = U200b( composition ).join( "\n" );
@@ -435,19 +473,54 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 
 /*;
 	@method-documentation:
-		This will let us set the logging function.
+		Sets a property of this log engine.
+
+		Not all property can be set to limit this function
+			for security purposes.
 	@end-method-documentation
 */
-Olivant.prototype.setLog = function setLog( log ){
-	if( typeof log != "function" ){
-		this.reset( Issue, true )
-			.silence( )
-			.prompt( "invalid log function", log );
+Olivant.prototype.set = function set( property, value ){
+	/*;
+		@meta-configuration:
+			{
+				"property:required": "string",
+				"value": "*"
+			}
+		@end-meta-configuration
+	*/
+
+	if( arguments.length == 1 &&
+		typeof arguments[ 0 ] == "object" )
+	{
+		var option = arguments[ 0 ];
+		for( var property in option ){
+			this.set( property, option[ property ] );
+		}
 
 		return this;
 	}
 
-	this.log = log;
+	if( typeof property != "string" ){
+		this.reset( Issue, true )
+			.silence( )
+			.prompt( "invalid property", property );
+
+		return this;
+	}
+
+	if( typeof property == "string" &&
+		property != LOG  &&
+		property != SILENT &&
+		property != CONTEXT )
+	{
+		this.reset( Issue, true )
+			.silence( )
+			.prompt( "invalid property", property );
+
+		return this;
+	}
+
+	this[ property ] = value;
 
 	return this;
 };
@@ -726,6 +799,41 @@ Olivant.prototype.redirect = function redirect( path ){
 			.silence( )
 			.prompt( "empty path to be redirected" );
 	}
+
+	return this;
+};
+
+/*;
+	@method-documentation:
+		Pass the instance to the callback first parameter.
+
+		This follows the standard error-result-option convention.
+	@end-method-documentation
+*/
+Olivant.prototype.pass = function pass( callback, result, option ){
+	/*;
+		@meta-configuration:
+			{
+				"callback:required": "function"
+			}
+		@end-meta-configuration
+	*/
+
+	if( typeof callback != "function" ){
+		this.reset( Bug, true )
+			.prompt( "invalid callback" );
+
+		return this;
+	}
+
+	if( this.context ){
+		callback = called.bind( this.context )( callback );
+
+	}else{
+		callback = called( callback );
+	}
+
+	callback( this, result, option );
 
 	return this;
 };
