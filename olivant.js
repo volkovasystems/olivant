@@ -76,10 +76,12 @@
 if( typeof window == "undefined" ){
 	var asea = require( "asea" );
 	var blacksea = require( "blacksea" );
+	var budge = require( "budge" );
 	var called = require( "called" );
 	var chalk = require( "chalk" );
 	var diatom = require( "diatom" );
 	var dexist = require( "dexist" );
+	var doubt = require( "doubt" );
 	var Ethernity = require( "ethernity" );
 	var EventEmitter = require( "events" );
 	var glucose = require( "glucose" );
@@ -106,6 +108,12 @@ if( typeof window != "undefined" &&
 }
 
 if( asea.client &&
+	!( "budge" in window ) )
+{
+	throw new Error( "budge is not defined" );
+}
+
+if( asea.client &&
 	!( "called" in window ) )
 {
 	throw new Error( "called is not defined" );
@@ -115,6 +123,12 @@ if( asea.client &&
 	!( "diatom" in window ) )
 {
 	throw new Error( "diatom is not defined" );
+}
+
+if( asea.client &&
+	!( "doubt" in window ) )
+{
+	throw new Error( "doubt is not defined" );
 }
 
 if( asea.client &&
@@ -219,8 +233,9 @@ harden( "LOG", "log" );
 harden( "SILENT", "silent" );
 
 Olivant.prototype.initialize = function initialize( option ){
-	if( typeof option == "object" &&
-		!arguments[ 0 ].toString( ).match( /Arguments/ ) )
+	if( typeof arguments[ 0 ] == "object" &&
+		!doubt( arguments[ 0 ] ).ARGUMENTS &&
+		!( arguments[ 0 ] instanceof Error ) )
 	{
 		this.load( option );
 
@@ -233,12 +248,15 @@ Olivant.prototype.initialize = function initialize( option ){
 	if( arguments.length == 0 ){
 		return this;
 
+	}else if( arguments[ 0 ] instanceof Error ){
+		var error = arguments[ 0 ];
+
+		this.remind.apply( this, [ error.message, error ].concat( budge( arguments ) ) );
+
 	}else if( arguments[ 0 ] instanceof Olivant ){
 		this.load( arguments[ 0 ] );
 
-	}else if( typeof arguments[ 0 ] == "object" &&
-		arguments[ 0 ].toString( ).match( /Arguments/ ) )
-	{
+	}else if( doubt( arguments[ 0 ] ).ARGUMENTS ){
 		this.remind.apply( this, plough( raze( arguments[ 0 ] ) ) );
 
 	}else if( typeof arguments[ 0 ] == "string" ){
@@ -375,12 +393,12 @@ Olivant.prototype.getMessage = function getMessage( ){
 
 	var stack = "stack trace not ready";
 	if( !this.silent &&
-		Array.isArray( this.stack ) &&
+		doubt( this.stack ).ARRAY &&
 		this.stack.length )
 	{
 		stack = this.stack || stack;
 
-		if( Array.isArray( stack ) ){
+		if( doubt( stack ).ARRAY ){
 			stack = stack.map( function onEachFrame( frame ){
 				return frame.toString( );
 			} );
@@ -623,22 +641,56 @@ Olivant.prototype.report = function report( ){
 		delete this.timeout.report;
 	}
 
-	this.timeout.report = snapd.bind( this )( function emitReport( ){
-		if( asea.server ){
-			process.emit( this.name, this );
+	this.timeout.report = snapd.bind( this )
+		( function emitReport( ){
+			if( asea.server ){
+				process.emit( this.name, this );
 
-		}else if( asea.client ){
-			var event = new Event( this.name );
-			event.data = this;
+			}else if( asea.client ){
+				var event = new Event( this.name );
+				event.data = this;
 
-			document.dispatchEvent( event );
-		}
+				document.dispatchEvent( event );
+			}
 
-		delete this.timeout.report;
-	}, 1000 ).timeout;
+			delete this.timeout.report;
+		}, 1000 ).timeout;
 
 	return this;
 };
+
+/*;
+	@static-method-documentation:
+		Crush the parameter extracting string information.
+	@end-static-method-documentation
+
+	@todo:
+		Add shortening for strings that are too long.
+	@end-todo
+*/
+harden( "crush", function crush( parameter ){
+	if( parameter instanceof Error ){
+		return parameter.stack.toString( );
+
+	}else if( parameter instanceof Olivant ){
+		return parameter.message;
+
+	}else if( typeof parameter == "string" ||
+		typeof parameter == "number" ||
+		typeof parameter == "boolean" )
+	{
+		return parameter.toString( );
+
+	}else if( asea.server ){
+		return util.inspect( parameter, { "depth": null } );
+
+	}else if( asea.client ){
+		return parameter.toString( );
+
+	}else{
+		return parameter.toString( );
+	}
+}, Olivant );
 
 /*;
 	@method-documentation:
@@ -652,23 +704,11 @@ Olivant.prototype.remind = function remind( ){
 
 	this.message = U200b( raze( arguments )
 		.map( function onEachParameter( parameter ){
-			if( parameter instanceof Error ){
-				return parameter.stack.toString( );
-
-			}else if( typeof parameter != "string" &&
-				parameter.length )
-			{
+			if( doubt( parameter ).AS_ARRAY ){
+				console.log( parameter );
 				parameter = raze( parameter )
 					.map( function onEachParameter( parameter ){
-						if( parameter instanceof Error ){
-							return parameter.stack.toString( );
-
-						}else if( asea.server ){
-							return util.inspect( parameter, { "depth": null } );
-
-						}else if( asea.client ){
-							return parameter.toString( );
-						}
+						return Olivant.crush( parameter )
 					} );
 
 				return U200b( parameter
@@ -676,20 +716,8 @@ Olivant.prototype.remind = function remind( ){
 						return !!message;
 					} ) ).join( ", " );
 
-			}else if( parameter instanceof Olivant ){
-				return parameter.message;
-
-			}else if( typeof parameter == "string" ||
-				typeof parameter == "number" ||
-				typeof parameter == "boolean" )
-			{
-				return parameter;
-
-			}else if( asea.server ){
-				return util.inspect( parameter, { "depth": null } );
-
-			}else if( asea.client ){
-				return parameter.toString( );
+			}else{
+				return Olivant.crush( parameter );
 			}
 		} )
 		.concat( [ this.message ] )
@@ -739,33 +767,34 @@ Olivant.prototype.prompt = function prompt( ){
 		delete this.timeout.prompt;
 	}
 
-	this.timeout.prompt = snapd.bind( this )( function onTimeout( ){
-		if( this.depth == 2 ){
-			this.log( this.getMessage( ) );
+	this.timeout.prompt = snapd.bind( this )
+		( function onTimeout( ){
+			if( this.depth == 2 ){
+				this.log( this.getMessage( ) );
 
-			return this;
-		}
+				return this;
+			}
 
-		if( Array.isArray( this.stack ) &&
-			this.stack.length )
-		{
-			this.log( this.getMessage( ) );
+			if( doubt( this.stack ).ARRAY &&
+				this.stack.length )
+			{
+				this.log( this.getMessage( ) );
 
-		}else{
-			this.getTrace( ( function onTrace( error, stack ){
-				if( !error && stack ){
-					this.stack = stack;
+			}else{
+				this.getTrace( ( function onTrace( error, stack ){
+					if( !error && stack ){
+						this.stack = stack;
 
-					this.log( this.getMessage( ) );
+						this.log( this.getMessage( ) );
 
-				}else{
-					this.log( this.getMessage( ) );
-				}
-			} ).bind( this ) );
-		}
+					}else{
+						this.log( this.getMessage( ) );
+					}
+				} ).bind( this ) );
+			}
 
-		delete this.timeout.prompt;
-	} ).timeout;
+			delete this.timeout.prompt;
+		} ).timeout;
 
 	return this;
 };
