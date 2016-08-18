@@ -232,10 +232,16 @@ harden( "CONTEXT", "context" );
 harden( "LOG", "log" );
 harden( "SILENT", "silent" );
 
+/*;
+	@method-documentation:
+		Option should not be glucose coated.
+	@end-method-documentation
+*/
 Olivant.prototype.initialize = function initialize( option ){
 	if( typeof arguments[ 0 ] == "object" &&
 		!doubt( arguments[ 0 ] ).ARGUMENTS &&
-		!( arguments[ 0 ] instanceof Error ) )
+		!( arguments[ 0 ] instanceof Error ) &&
+		option.COATED !== COATED )
 	{
 		this.load( option );
 
@@ -441,6 +447,11 @@ Olivant.prototype.getMessage = function getMessage( ){
 	return composition;
 };
 
+/*;
+	@method-documentation:
+		This should be used internally as much as possible.
+	@end-method-documentation
+*/
 Olivant.prototype.getTrace = function getTrace( callback ){
 	if( this.depth == 2 ){
 		this.remind( "tracing is disabled for depth 2" )
@@ -453,7 +464,7 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 		return this;
 	}
 
-	callback = called( callback );
+	callback = called.bind( this )( callback );
 
 	this.timeout.getTrace = snapd.bind( this )( function onTimeout( ){
 		delete this.timeout.getTrace;
@@ -476,7 +487,7 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 			callback( null, this.stack );
 		} ).bind( this ) )
 
-		.catch( function onError( error ){
+		.catch( ( function onError( error ){
 			if( this.timeout.getTrace ){
 				clearTimeout( this.timeout.getTrace );
 
@@ -484,7 +495,7 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 			}
 
 			callback( this.remind( error ) );
-		} );
+		} ).bind( this ) );
 
 	return this;
 };
@@ -662,6 +673,9 @@ Olivant.prototype.report = function report( ){
 /*;
 	@static-method-documentation:
 		Crush the parameter extracting string information.
+
+		Special support for glucose coated parameters.
+
 	@end-static-method-documentation
 
 	@todo:
@@ -669,7 +683,16 @@ Olivant.prototype.report = function report( ){
 	@end-todo
 */
 harden( "crush", function crush( parameter ){
-	if( parameter instanceof Error ){
+	if( typeof parameter == "object" &&
+		parameter.COATED === COATED )
+	{
+		if( parameter.self ){
+			this.set( CONTEXT, parameter.self );
+		}
+
+		return util.inspect( parameter, { "depth": null } );
+
+	}else if( parameter instanceof Error ){
 		return parameter.stack.toString( );
 
 	}else if( parameter instanceof Olivant ){
@@ -702,13 +725,14 @@ Olivant.prototype.remind = function remind( ){
 		return this;
 	}
 
+	var crush = Olivant.crush.bind( this );
+
 	this.message = U200b( raze( arguments )
 		.map( function onEachParameter( parameter ){
 			if( doubt( parameter ).AS_ARRAY ){
-				console.log( parameter );
 				parameter = raze( parameter )
 					.map( function onEachParameter( parameter ){
-						return Olivant.crush( parameter )
+						return crush( parameter )
 					} );
 
 				return U200b( parameter
@@ -717,7 +741,7 @@ Olivant.prototype.remind = function remind( ){
 					} ) ).join( ", " );
 
 			}else{
-				return Olivant.crush( parameter );
+				return crush( parameter );
 			}
 		} )
 		.concat( [ this.message ] )
@@ -804,6 +828,8 @@ Olivant.prototype.prompt = function prompt( ){
 		Set the redirection configuration.
 
 		This will trigger redirect response when send is called.
+
+		Default of DEFAULT_REDIRECT_PATH will be used if path is not given.
 	@end-method-documentation
 */
 Olivant.prototype.redirect = function redirect( path ){
