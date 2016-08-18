@@ -222,6 +222,8 @@ harden( "WARNING", "warning" );
 harden( "WARNING_CODE", 400 );
 harden( "ECHO", "echo" );
 harden( "ECHO_CODE", 200 );
+harden( "RECORD", "record" );
+harden( "RECORD_CODE", 200 );
 harden( "PROMPT", "prompt" );
 harden( "PROMPT_CODE", 200 );
 harden( "SUCCESS", "success" );
@@ -281,7 +283,8 @@ Olivant.prototype.load = function load( option ){
 
 	this.code = option.code || this.code || ECHO_CODE;
 
-	this.log = option.log || this.log || console.log;
+	this.log = option.log || this.log ||
+		( ( asea.client )? console.debug : console.log );
 
 	if( option.self ){
 		this.context = option.self;
@@ -993,6 +996,32 @@ Olivant.create( "Failed", {
 	"depth": 6,
 	"color": ( asea.server? chalk.yellow : null )
 } );
+
+Olivant.create( "Record", {
+	"name": RECORD,
+	"status": RECORD,
+	"code": RECORD_CODE,
+	"silent": true,
+	"depth": 5,
+	"color": ( asea.server? chalk.blue : null ),
+	"initialize": function initialize( ){
+		if( asea.server &&
+			process.env.NODE_ENV != "production" )
+		{
+			this.prompt( );
+
+		}else if( asea.client &&
+			( window.ENVIRONMENT != "production" &&
+				window.environment != "production" &&
+				!window.PRODUCTION &&
+				!window.production )
+		{
+			this.prompt( );
+		}
+
+		return this;
+	}
+} )
 
 Olivant.create( "Prompt", {
 	"name": PROMPT,
