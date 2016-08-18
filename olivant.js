@@ -863,6 +863,8 @@ Olivant.prototype.redirect = function redirect( path ){
 		Pass the instance to the callback first parameter.
 
 		This follows the standard error-result-option convention.
+
+		Has special support for glucose coated option.
 	@end-method-documentation
 */
 Olivant.prototype.pass = function pass( callback, result, option ){
@@ -886,6 +888,13 @@ Olivant.prototype.pass = function pass( callback, result, option ){
 
 	}else{
 		callback = called( callback );
+	}
+
+	if( option &&
+		option.self &&
+		option.COATED == COATED )
+	{
+		this.set( CONTEXT, option.self );
 	}
 
 	callback( this, result, option );
