@@ -1014,7 +1014,7 @@ Olivant.create( "Record", {
 			( window.ENVIRONMENT != "production" &&
 				window.environment != "production" &&
 				!window.PRODUCTION &&
-				!window.production )
+				!window.production ) )
 		{
 			this.prompt( );
 		}
