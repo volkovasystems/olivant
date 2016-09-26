@@ -265,7 +265,7 @@ Olivant.prototype.initialize = function initialize( option ){
 		this.load( arguments[ 0 ] );
 
 	}else if( doubt( arguments[ 0 ] ).ARGUMENTS ){
-		this.remind.apply( this, plough( raze( arguments[ 0 ] ) ) );
+		this.remind.apply( this, plough( arguments[ 0 ] ) );
 
 	}else if( typeof arguments[ 0 ] == "string" ){
 		this.remind.apply( this, raze( arguments ) );
