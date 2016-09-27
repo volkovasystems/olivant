@@ -750,7 +750,8 @@ Olivant.prototype.remind = function remind( ){
 		.concat( [ this.message ] )
 		.filter( function onEachMessage( message ){
 			return !!message;
-		} ) )
+		} )
+	 	.reverse( ) )
 		.join( ", " );
 
 	this.report( );
