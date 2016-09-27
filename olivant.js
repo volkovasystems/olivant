@@ -703,7 +703,8 @@ harden( "crush", function crush( parameter ){
 
 	}else if( typeof parameter == "string" ||
 		typeof parameter == "number" ||
-		typeof parameter == "boolean" )
+		typeof parameter == "boolean" ||
+		typeof parameter == "function" )
 	{
 		return parameter.toString( );
 
