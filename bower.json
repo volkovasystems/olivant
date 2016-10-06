@@ -1,6 +1,6 @@
 {
   "name": "olivant",
-  "version": "0.7.21",
+  "version": "0.7.22",
   "description": "Echo the destruction caused by your code.",
   "main": "olivant.js",
   "authors": [
@@ -32,7 +32,6 @@
     "stacktrace-js": "^1.3.1",
     "outre": "^0.0.3",
     "raze": "^0.0.8",
-    "symbiote": "^0.2.1",
     "asea": "^0.1.2",
     "plough": "^0.0.4",
     "diatom": "^0.2.4",
@@ -42,10 +41,11 @@
     "harden": "^0.3.5",
     "budge": "^0.0.1",
     "doubt": "^0.0.4",
-    "glucose": "^0.1.0",
     "heredito": "^0.8.0",
     "u200b": "^0.2.3",
     "ethernity": "^0.2.6",
-    "meek": "^0.1.4"
+    "meek": "^0.1.4",
+    "symbiote": "^0.3.0",
+    "glucose": "^0.1.3"
   }
 }

@@ -275,7 +275,7 @@ Olivant.prototype.initialize = function initialize( option ){
 };
 
 Olivant.prototype.load = function load( option ){
-	option = glucose( option );
+	option = glucose.bind( this )( option );
 
 	this.name = option.name || this.name || ECHO
 
