@@ -947,7 +947,12 @@ harden( "create", function create( name, option ){
 
 	symbiote( Clone );
 
-	harden( name, Clone );
+	if( asea.server ){
+		harden( name, Clone, global );
+
+	}else if( asea.client ){
+		harden( name, Clone, window );
+	}
 }, Olivant );
 
 Olivant.create( "Fatal", {

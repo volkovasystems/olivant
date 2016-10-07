@@ -1,6 +1,6 @@
 {
   "name": "olivant",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "dependencies": {
     "asea": {
       "version": "0.1.2",
@@ -359,7 +359,7 @@
       "from": "harden@latest"
     },
     "heredito": {
-      "version": "0.8.0",
+      "version": "0.9.0",
       "from": "heredito@latest",
       "dependencies": {
         "ate": {
@@ -368,7 +368,8 @@
           "dependencies": {
             "zelf": {
               "version": "0.0.4",
-              "from": "zelf@0.0.4"
+              "from": "https://registry.npmjs.org/zelf/-/zelf-0.0.4.tgz",
+              "resolved": "https://registry.npmjs.org/zelf/-/zelf-0.0.4.tgz"
             }
           }
         }
