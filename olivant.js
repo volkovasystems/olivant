@@ -253,21 +253,36 @@ Olivant.prototype.initialize = function initialize( option ){
 
 	this.getTrace( );
 
+	let parameter = arguments[ 0 ];
+
 	if( arguments.length == 0 ){
 		return this;
 
-	}else if( arguments[ 0 ] instanceof Error ){
-		var error = arguments[ 0 ];
+	}else if( parameter instanceof Error ){
+		var error = parameter;
 
 		this.remind.apply( this, [ error.message, error ].concat( budge( arguments ) ) );
 
-	}else if( arguments[ 0 ] instanceof Olivant ){
-		this.load( arguments[ 0 ] );
+	}else if( parameter instanceof Olivant ){
+		this.load( parameter );
 
-	}else if( doubt( arguments[ 0 ] ).ARGUMENTS ){
-		this.remind.apply( this, plough( arguments[ 0 ] ) );
+	}else if( doubt( parameter ).ARGUMENTS ){
+		this.remind.apply( this, plough( parameter ) );
 
-	}else if( typeof arguments[ 0 ] == "string" ){
+	}else if( typeof parameter == "string" ){
+		this.remind.apply( this, raze( arguments ) );
+
+	}else if( typeof parameter == "object" &&
+		parameter.constructor &&
+		typeof parameter.constructor == "function" &&
+		parameter.constructor.name != "Function" &&
+		parameter instanceof parameter.constructor )
+	{
+		this.load( parameter );
+
+		this.remind.apply( this, raze( arguments ) );
+
+	}else if( typeof parameter == "object" ){
 		this.remind.apply( this, raze( arguments ) );
 	}
 
