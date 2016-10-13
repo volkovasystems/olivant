@@ -1,6 +1,6 @@
 {
   "name": "olivant",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "dependencies": {
     "asea": {
       "version": "0.1.2",
@@ -344,7 +344,7 @@
       }
     },
     "glucose": {
-      "version": "0.2.1",
+      "version": "0.2.2",
       "from": "glucose@latest",
       "dependencies": {
         "zelf": {
