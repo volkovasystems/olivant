@@ -301,7 +301,7 @@ Olivant.prototype.load = function load( option ){
 	this.log = option.log || this.log ||
 		( ( asea.client )? console.debug : console.log );
 
-	if( option.self ){
+	if( !this.context && option.self ){
 		this.context = option.self;
 	}
 
@@ -336,6 +336,11 @@ Olivant.prototype.load = function load( option ){
 	this.stack = option.stack || this.stack || [ ];
 
 	this.message = option.message || this.message || "";
+
+	this.inspect = option.inspect || this.inspect || {
+		"depth": 1,
+		"length": 200
+	};
 
 	if( asea.server ){
 		redsea( Issue );
@@ -695,12 +700,14 @@ Olivant.prototype.report = function report( ){
 		Special support for glucose coated parameters.
 
 	@end-static-method-documentation
-
-	@todo:
-		Add shortening for strings that are too long.
-	@end-todo
 */
-harden( "crush", function crush( parameter ){
+harden( "crush", function crush( parameter, option ){
+	option = option || this.inspect || { };
+
+	let depth = option.depth || 1;
+	let length = option.length || 200;
+	let space = /\s{2,}/g;
+
 	if( typeof parameter == "object" &&
 		parameter.COATED === COATED )
 	{
@@ -708,8 +715,9 @@ harden( "crush", function crush( parameter ){
 			this.set( CONTEXT, parameter.self );
 		}
 
-		return util.inspect( parameter, { "depth": 1 } )
-			.replace( /\n/g, "" );
+		return util.inspect( parameter, { "depth": depth } )
+			.replace( space, " " )
+			.substring( 0, length ) + "...";
 
 	}else if( parameter instanceof Error ){
 		return parameter.stack.toString( );
@@ -717,16 +725,21 @@ harden( "crush", function crush( parameter ){
 	}else if( parameter instanceof Olivant ){
 		return parameter.message;
 
+	}else if( typeof parameter == "function" ){
+		return parameter.toString( )
+			.replace( space, " " )
+			.substring( 0, length ) + "...";
+
 	}else if( typeof parameter == "string" ||
 		typeof parameter == "number" ||
-		typeof parameter == "boolean" ||
-		typeof parameter == "function" )
+		typeof parameter == "boolean" )
 	{
 		return parameter.toString( );
 
 	}else if( asea.server ){
-		return util.inspect( parameter, { "depth": 1 } )
-			.replace( /\n/g, "" );
+		return util.inspect( parameter, { "depth": depth } )
+			.replace( space, " " )
+			.substring( 0, length );
 
 	}else if( asea.client ){
 		return parameter.toString( );
@@ -926,7 +939,8 @@ Olivant.prototype.pass = function pass( callback, result, option ){
 
 harden( "create", function create( name, option ){
 	var Clone = diatom( name );
-	Clone = heredito( Clone, Olivant );
+
+	heredito( Clone, Olivant );
 
 	Clone.prototype.name = option.name;
 	Clone.prototype.status = option.status;
@@ -934,6 +948,7 @@ harden( "create", function create( name, option ){
 	Clone.prototype.silent = option.silent;
 	Clone.prototype.depth = option.depth;
 	Clone.prototype.color = option.color;
+	Clone.prototype.inspect = option.inspect;
 	Clone.prototype.initialize = option.initialize ||
 		function initialize( ){
 			this.name = option.name;
@@ -964,6 +979,10 @@ Olivant.create( "Fatal", {
 	"silent": false,
 	"depth": 9,
 	"color": ( asea.server? chalk.red : null ),
+	"inspect": {
+		"depth": 5,
+		"length": 1000
+	},
 	"initialize": function initialize( ){
 		this.prompt( );
 		this.report( );
@@ -982,7 +1001,11 @@ Olivant.create( "Issue", {
 	"code": ISSUE_CODE,
 	"silent": false,
 	"depth": 8,
-	"color": ( asea.server? chalk.red : null )
+	"color": ( asea.server? chalk.red : null ),
+	"inspect": {
+		"depth": 5,
+		"length": 1000
+	}
 } );
 
 Olivant.create( "Bug", {
@@ -991,7 +1014,11 @@ Olivant.create( "Bug", {
 	"code": ERROR_CODE,
 	"silent": false,
 	"depth": 7,
-	"color": ( asea.server? chalk.red : null )
+	"color": ( asea.server? chalk.red : null ),
+	"inspect": {
+		"depth": 5,
+		"length": 1000
+	}
 } );
 
 Olivant.create( "Warning", {
@@ -1000,7 +1027,11 @@ Olivant.create( "Warning", {
 	"code": WARNING_CODE,
 	"silent": false,
 	"depth": 6,
-	"color": ( asea.server? chalk.yellow : null )
+	"color": ( asea.server? chalk.yellow : null ),
+	"inspect": {
+		"depth": 1,
+		"length": 500
+	}
 } );
 
 Olivant.create( "Uncertain", {
