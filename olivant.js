@@ -708,7 +708,8 @@ harden( "crush", function crush( parameter ){
 			this.set( CONTEXT, parameter.self );
 		}
 
-		return util.inspect( parameter, { "depth": null } );
+		return util.inspect( parameter, { "depth": 1 } )
+			.replace( /\n/g, "" );
 
 	}else if( parameter instanceof Error ){
 		return parameter.stack.toString( );
@@ -724,7 +725,8 @@ harden( "crush", function crush( parameter ){
 		return parameter.toString( );
 
 	}else if( asea.server ){
-		return util.inspect( parameter, { "depth": null } );
+		return util.inspect( parameter, { "depth": 1 } )
+			.replace( /\n/g, "" );
 
 	}else if( asea.client ){
 		return parameter.toString( );

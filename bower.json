@@ -1,6 +1,6 @@
 {
   "name": "olivant",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "Echo the destruction caused by your code.",
   "main": "olivant.js",
   "authors": [
