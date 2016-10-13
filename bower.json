@@ -1,6 +1,6 @@
 {
   "name": "olivant",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "Echo the destruction caused by your code.",
   "main": "olivant.js",
   "authors": [
@@ -46,6 +46,6 @@
     "symbiote": "^0.3.0",
     "heredito": "^0.9.0",
     "snapd": "^0.1.0",
-    "glucose": "^0.2.0"
+    "glucose": "^0.2.1"
   }
 }
