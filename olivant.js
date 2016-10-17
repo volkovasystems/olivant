@@ -759,7 +759,7 @@ Olivant.prototype.remind = function remind( ){
 		return this;
 	}
 
-	var crush = Olivant.crush.bind( this );
+	let crush = Olivant.crush.bind( this );
 
 	this.message = U200b( raze( arguments )
 		.map( function onEachParameter( parameter ){
@@ -778,11 +778,12 @@ Olivant.prototype.remind = function remind( ){
 				return crush( parameter );
 			}
 		} )
+		.reverse( )
 		.concat( [ this.message ] )
 		.filter( function onEachMessage( message ){
 			return !!message;
 		} )
-	 	.reverse( ) )
+		.reverse( ) )
 		.join( ", " );
 
 	this.report( );
@@ -1052,13 +1053,31 @@ Olivant.create( "Failed", {
 	"color": ( asea.server? chalk.yellow : null )
 } );
 
+Olivant.create( "Prompt", {
+	"name": PROMPT,
+	"status": PROMPT,
+	"code": PROMPT_CODE,
+	"silent": true,
+	"depth": 5,
+	"color": ( asea.server? chalk.blue : null ),
+	"initialize": function initialize( ){
+		this.prompt( );
+
+		return this;
+	}
+} );
+
 Olivant.create( "Record", {
 	"name": RECORD,
 	"status": RECORD,
 	"code": RECORD_CODE,
 	"silent": true,
-	"depth": 5,
-	"color": ( asea.server? chalk.blue : null ),
+	"depth": 4,
+	"color": ( asea.server? chalk.white : null ),
+	"inspect": {
+		"depth": 1,
+		"length": 100
+	},
 	"initialize": function initialize( ){
 		if( asea.server &&
 			process.env.NODE_ENV != "production" )
@@ -1074,19 +1093,7 @@ Olivant.create( "Record", {
 			this.prompt( );
 		}
 
-		return this;
-	}
-} )
-
-Olivant.create( "Prompt", {
-	"name": PROMPT,
-	"status": PROMPT,
-	"code": PROMPT_CODE,
-	"silent": true,
-	"depth": 5,
-	"color": ( asea.server? chalk.blue : null ),
-	"initialize": function initialize( ){
-		this.prompt( );
+		this.report( );
 
 		return this;
 	}
