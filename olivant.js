@@ -719,7 +719,7 @@ harden( "crush", function crush( parameter, option ){
 			.replace( space, " " )
 			.substring( 0, length ) + "...";
 
-	}else if( parameter instanceof Error ){
+	}else if( parameter && parameter instanceof Error && parameter.stack ){
 		return parameter.stack.toString( );
 
 	}else if( parameter instanceof Olivant ){
