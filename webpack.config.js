@@ -25,10 +25,11 @@ module.exports = {
 		"filename": "olivant.deploy.js"
 	},
 	"plugins": [
-		new IgnorePlugin(  ),
+		new IgnorePlugin( /blacksea|chalk|dexist|events|http|redsea|util/ ),
 		new ResolverPlugin( new DirectoryDescriptionFilePlugin( "bower.json", [ "support" ] ) ),
-		new ResolverPlugin( new DirectoryDescriptionFilePlugin( "package.json", [ "main" ] ) ),
 		new ResolverPlugin( new DirectoryDescriptionFilePlugin( ".bower.json", [ "main" ] ) ),
+		new ResolverPlugin( new DirectoryDescriptionFilePlugin( "package.json", [ "browser" ] ) ),
+		new ResolverPlugin( new DirectoryDescriptionFilePlugin( "package.json", [ "main" ] ) ),
 		new UglifyJsPlugin( {
 			"compress": {
 				"keep_fargs": true,
