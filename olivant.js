@@ -105,11 +105,8 @@ const trace = require( "stacktrace-js" );
 const U200b = require( "u200b" );
 const util = require( "util" );
 
-var Olivant = diatom( "Olivant" );
+const Olivant = diatom( "Olivant" );
 
-if( asea.server ){
-	Olivant = heredito( Olivant, EventEmitter );
-}
 
 harden( "FATAL", "fatal" );
 harden( "FATAL_CODE", 500 );
@@ -842,7 +839,7 @@ Olivant.prototype.pass = function pass( callback, result, option ){
 };
 
 harden( "create", function create( name, option ){
-	var Clone = diatom( name );
+	let Clone = diatom( name );
 
 	heredito( Clone, Olivant );
 
@@ -1019,6 +1016,4 @@ Olivant.create( "Success", {
 	"color": ( asea.server? chalk.green : null )
 } );
 
-if( asea.server ){
-	module.exports = Olivant;
-}
+module.exports = Olivant;
