@@ -260,14 +260,14 @@ Olivant.prototype.load = function load( option ){
 	@end-method-documentation
 */
 Olivant.prototype.reset = function reset( option, renew ){
-	if( typeof option == "function" &&
-		typeof option.prototype == "object" &&
-		option.prototype instanceof Olivant )
+	if( protype( option, FUNCTION ) &&
+		protype( option.prototype, OBJECT ) &&
+		clazof( option.prototype, Olivant ) )
 	{
-		var logEngine = option;
+		let logEngine = option;
 
 		if( renew ){
-			var data = {
+			let data = {
 				"message": this.message,
 				"stack": this.stack
 			};
@@ -278,7 +278,7 @@ Olivant.prototype.reset = function reset( option, renew ){
 			this.load( logEngine.prototype );
 		}
 
-	}else if( typeof option == "object" ){
+	}else if( protype( option, OBJECT ) ){
 		this.load( option );
 
 	}else{
