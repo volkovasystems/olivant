@@ -81,6 +81,7 @@ const asea = require( "asea" );
 const blacksea = require( "blacksea" );
 const budge = require( "budge" );
 const called = require( "called" );
+const clazof = require( "clazof" );
 const chalk = require( "chalk" );
 const diatom = require( "diatom" );
 const dexist = require( "dexist" );
@@ -142,9 +143,9 @@ harden( "SILENT", "silent" );
 	@end-method-documentation
 */
 Olivant.prototype.initialize = function initialize( option ){
-	if( typeof arguments[ 0 ] == "object" &&
+	if( protype( arguments[ 0 ], OBJECT ) &&
 		!doubt( arguments[ 0 ] ).ARGUMENTS &&
-		!( arguments[ 0 ] instanceof Error ) &&
+		!( clazof( arguments[ 0 ], Error ) ) &&
 		option.COATED !== COATED )
 	{
 		this.load( option );
@@ -161,30 +162,30 @@ Olivant.prototype.initialize = function initialize( option ){
 		return this;
 
 	}else if( parameter instanceof Error ){
-		var error = parameter;
+		let error = parameter;
 
 		this.remind.apply( this, [ error.message, error ].concat( budge( arguments ) ) );
 
-	}else if( parameter instanceof Olivant ){
+	}else if( clazof( parameter, Olivant ) ){
 		this.load( parameter );
 
 	}else if( doubt( parameter ).ARGUMENTS ){
 		this.remind.apply( this, plough( parameter ) );
 
-	}else if( typeof parameter == "string" ){
+	}else if( protype( parameter, STRING ) ){
 		this.remind.apply( this, raze( arguments ) );
 
-	}else if( typeof parameter == "object" &&
+	}else if( protype( parameter, OBJECT ) &&
 		parameter.constructor &&
-		typeof parameter.constructor == "function" &&
+		protype( parameter.constructor, FUNCTION ) &&
 		parameter.constructor.name != "Function" &&
-		parameter instanceof parameter.constructor )
+		clazof( parameter, parameter.constructor ) )
 	{
 		this.load( parameter );
 
 		this.remind.apply( this, raze( arguments ) );
 
-	}else if( typeof parameter == "object" ){
+	}else if( protype( parameter, OBJECT ) ){
 		this.remind.apply( this, raze( arguments ) );
 	}
 
