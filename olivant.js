@@ -309,21 +309,21 @@ Olivant.prototype.valueOf = function valueOf( ){
 	@end-method-documentation
 */
 Olivant.prototype.getMessage = function getMessage( ){
-	var composition = [ ];
+	let composition = [ ];
 
-	var timestamp = Ethernity( ).printTime( true );
+	let timestamp = Ethernity( ).printTime( true );
 	if( asea.server ){
 		timestamp = chalk.dim( timestamp );
 	}
 	composition.push( timestamp );
 
-	var message = U200b( outre( [ this.name, this.status, this.message ] ) ).join( ", " );
+	let message = U200b( outre( [ this.name, this.status, this.message ] ) ).join( ", " );
 	if( asea.server ){
 		message = this.color( message );
 	}
 	composition.push( message );
 
-	var stack = "stack trace not ready";
+	let stack = "stack trace not ready";
 	if( !this.silent &&
 		doubt( this.stack ).ARRAY &&
 		this.stack.length )
