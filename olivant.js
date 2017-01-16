@@ -502,14 +502,14 @@ Olivant.prototype.send = function send( ){
 		return this;
 	}
 
-	var message = meek( this.status, U200b( this.toString( ) ).raw( ) );
+	let message = meek( this.status, U200b( this.toString( ) ).raw( ) );
 
-	var procedure = arguments[ 0 ];
+	let procedure = arguments[ 0 ];
 
 	if( asea.server &&
 		this.state == REDIRECT &&
 		this.path &&
-		procedure instanceof http.ServerResponse )
+		clazof( procedure, http.ServerResponse ) )
 	{
 		segway( {
 			"response": procedure,
@@ -522,7 +522,7 @@ Olivant.prototype.send = function send( ){
 
 	}else if( asea.server &&
 		!this.state &&
-		procedure instanceof http.ServerResponse )
+		clazof( procedure, http.ServerResponse ) )
 	{
 		message.send( procedure, this.code );
 
@@ -540,7 +540,7 @@ Olivant.prototype.send = function send( ){
 
 	}else if( asea.client &&
 		!this.state &&
-		typeof procedure == "function" )
+		protype( procedure, FUNCTION ) )
 	{
 		message.send.bind( this )( procedure );
 
