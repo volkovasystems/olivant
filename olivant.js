@@ -584,7 +584,7 @@ Olivant.prototype.report = function report( ){
 				process.emit( this.name, this );
 
 			}else if( asea.client ){
-				var event = new Event( this.name );
+				let event = new Event( this.name );
 				event.data = this;
 
 				document.dispatchEvent( event );
