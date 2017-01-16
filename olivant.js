@@ -611,7 +611,7 @@ harden( "crush", function crush( parameter, option ){
 	let length = option.length || 200;
 	let space = /\s{2,}/g;
 
-	if( typeof parameter == "object" &&
+	if( protype( parameter, OBJECT ) &&
 		parameter.COATED === COATED )
 	{
 		if( parameter.self ){
@@ -622,20 +622,20 @@ harden( "crush", function crush( parameter, option ){
 			.replace( space, " " )
 			.substring( 0, length ) + "...";
 
-	}else if( parameter && parameter instanceof Error && parameter.stack ){
+	}else if( parameter && clazof( parameter, Error ) && parameter.stack ){
 		return parameter.stack.toString( );
 
-	}else if( parameter instanceof Olivant ){
+	}else if( clazof( parameter, Olivant ) ){
 		return parameter.message;
 
-	}else if( typeof parameter == "function" ){
+	}else if( protype( parameter, FUNCTION ) ){
 		return parameter.toString( )
 			.replace( space, " " )
 			.substring( 0, length ) + "...";
 
-	}else if( typeof parameter == "string" ||
-		typeof parameter == "number" ||
-		typeof parameter == "boolean" )
+	}else if( protype( parameter, STRING ) ||
+		protype( parameter, NUMBER ) ||
+		protype( parameter, BOOLEAN ) )
 	{
 		return parameter.toString( );
 
