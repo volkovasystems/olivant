@@ -31,5 +31,28 @@
     "test",
     "tests"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "asea": "^0.6.0",
+    "budge": "^0.5.0",
+    "called": "^0.6.0",
+    "clazof": "^0.2.0",
+    "diatom": "^0.4.0",
+    "doubt": "^0.6.0",
+    "ethernity": "^0.5.0",
+    "filled": "^0.3.0",
+    "glucose": "^0.9.0",
+    "harden": "^0.13.0",
+    "heredito": "^0.12.0",
+    "kein": "^0.5.0",
+    "meek": "^0.4.0",
+    "outre": "^0.6.0",
+    "plough": "^0.5.0",
+    "protype": "^0.8.0",
+    "raze": "^0.6.0",
+    "segway": "^0.8.0",
+    "snapd": "^0.9.0",
+    "stacktrace-js": "^1.3.1",
+    "symbiote": "^0.7.0",
+    "u200b": "^0.8.0"
+  }
 }
