@@ -5,7 +5,7 @@
 		The MIT License (MIT)
 		@mit-license
 
-		Copyright (@c) 2016 Richeve Siodina Bebedor
+		Copyright (@c) 2017 Richeve Siodina Bebedor
 		@email: richeve.bebedor@gmail.com
 
 		Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,6 +34,9 @@
 			"file": "olivant.js",
 			"module": "olivant",
 			"author": "Richeve S. Bebedor",
+			"contributors": [
+				"John Lenon Maghanoy <johnlenonmaghanoy@gmail.com>"
+			],
 			"eMail": "richeve.bebedor@gmail.com",
 			"repository": "https://github.com/volkovasystems/olivant.git",
 			"test": "olivant-test.js",
@@ -73,134 +76,31 @@
 	@end-include
 */
 
-if( typeof window == "undefined" ){
-	var asea = require( "asea" );
-	var blacksea = require( "blacksea" );
-	var budge = require( "budge" );
-	var called = require( "called" );
-	var chalk = require( "chalk" );
-	var diatom = require( "diatom" );
-	var dexist = require( "dexist" );
-	var doubt = require( "doubt" );
-	var Ethernity = require( "ethernity" );
-	var EventEmitter = require( "events" );
-	var glucose = require( "glucose" );
-	var harden = require( "harden" );
-	var heredito = require( "heredito" );
-	var http = require( "http" );
-	var meek = require( "meek" );
-	var outre = require( "outre" );
-	var plough = require( "plough" );
-	var raze = require( "raze" );
-	var redsea = require( "redsea" );
-	var snapd = require( "snapd" );
-	var segway = require( "segway" );
-	var symbiote = require( "symbiote" );
-	var trace = require( "stacktrace-js" );
-	var U200b = require( "u200b" );
-	var util = require( "util" );
-}
-
-if( typeof window != "undefined" &&
-	!( "asea" in window ) )
-{
-	throw new Error( "asea is not defined" );
-}
-
-if( asea.client &&
-	!( "budge" in window ) )
-{
-	throw new Error( "budge is not defined" );
-}
-
-if( asea.client &&
-	!( "called" in window ) )
-{
-	throw new Error( "called is not defined" );
-}
-
-if( asea.client &&
-	!( "diatom" in window ) )
-{
-	throw new Error( "diatom is not defined" );
-}
-
-if( asea.client &&
-	!( "doubt" in window ) )
-{
-	throw new Error( "doubt is not defined" );
-}
-
-if( asea.client &&
-	!( "Ethernity" in window ) )
-{
-	throw new Error( "Ethernity is not defined" );
-}
-
-if( asea.client &&
-	!( "glucose" in window ) )
-{
-	throw new Error( "glucose is not defined" );
-}
-
-if( asea.client &&
-	!( "harden" in window ) )
-{
-	throw new Error( "harden is not defined" );
-}
-
-if( asea.client &&
-	!( "heredito" in window ) )
-{
-	throw new Error( "heredito is not defined" );
-}
-
-if( asea.client &&
-	!( "meek" in window ) )
-{
-	throw new Error( "meek is not defined" );
-}
-
-if( asea.client &&
-	!( "outre" in window ) )
-{
-	throw new Error( "outre is not defined" );
-}
-
-if( asea.client &&
-	!( "raze" in window ) )
-{
-	throw new Error( "raze is not defined" );
-}
-
-if( asea.client &&
-	!( "snapd" in window ) )
-{
-	throw new Error( "snapd is not defined" );
-}
-
-if( asea.client &&
-	!( "symbiote" in window ) )
-{
-	throw new Error( "symbiote is not defined" );
-}
-
-if( asea.client &&
-	!( "StackTrace" in window ) )
-{
-	throw new Error( "StackTrace is not defined" );
-
-}else if( asea.client &&
-	"StackTrace" in window )
-{
-	var trace = StackTrace;
-}
-
-if( asea.client &&
-	!( "U200b" in window ) )
-{
-	throw new Error( "U200b is not defined" );
-}
+const asea = require( "asea" );
+const blacksea = require( "blacksea" );
+const budge = require( "budge" );
+const called = require( "called" );
+const chalk = require( "chalk" );
+const diatom = require( "diatom" );
+const dexist = require( "dexist" );
+const doubt = require( "doubt" );
+const Ethernity = require( "ethernity" );
+const EventEmitter = require( "events" );
+const glucose = require( "glucose" );
+const harden = require( "harden" );
+const heredito = require( "heredito" );
+const http = require( "http" );
+const meek = require( "meek" );
+const outre = require( "outre" );
+const plough = require( "plough" );
+const raze = require( "raze" );
+const redsea = require( "redsea" );
+const snapd = require( "snapd" );
+const segway = require( "segway" );
+const symbiote = require( "symbiote" );
+const trace = require( "stacktrace-js" );
+const U200b = require( "u200b" );
+const util = require( "util" );
 
 var Olivant = diatom( "Olivant" );
 
