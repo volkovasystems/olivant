@@ -65,6 +65,7 @@
 			"meek": "meek"
 			"outre": "outre",
 			"plough": "plough",
+			"protype": "protype",
 			"raze": "raze",
 			"redsea": "redsea",
 			"snapd": "snapd",
@@ -93,6 +94,7 @@ const http = require( "http" );
 const meek = require( "meek" );
 const outre = require( "outre" );
 const plough = require( "plough" );
+const protype = require( "protype" );
 const raze = require( "raze" );
 const redsea = require( "redsea" );
 const snapd = require( "snapd" );
