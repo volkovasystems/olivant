@@ -54,6 +54,7 @@
 			"blacksea": "blacksea",
 			"called": "called",
 			"chalk": "chalk",
+			"clazof": "clazof",
 			"dexist": "dexist",
 			"diatom": "diatom",
 			"Ethernity": "ethernity",
