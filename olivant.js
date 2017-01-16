@@ -784,7 +784,7 @@ Olivant.prototype.redirect = function redirect( path ){
 	this.path = path;
 
 	if( !this.path &&
-		typeof DEFAULT_REDIRECT_PATH == "string" )
+		protype( DEFAULT_REDIRECT_PATH, STRING ) )
 	{
 		this.path = DEFAULT_REDIRECT_PATH;
 
