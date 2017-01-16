@@ -229,7 +229,7 @@ Olivant.prototype.load = function load( option ){
 
 	this.timeout = this.timeout || { };
 	if( this.timeout ){
-		for( var timeout in this.timeout ){
+		for( let timeout in this.timeout ){
 			clearTimeout( this.timeout[ timeout ] );
 
 			delete this.timeout[ timeout ];
