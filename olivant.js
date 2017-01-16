@@ -815,7 +815,7 @@ Olivant.prototype.pass = function pass( callback, result, option ){
 		@end-meta-configuration
 	*/
 
-	if( typeof callback != "function" ){
+	if( !protype( callback, FUNCTION ) ){
 		this.reset( Bug, true )
 			.prompt( "invalid callback" );
 
