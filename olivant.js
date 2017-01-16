@@ -445,17 +445,17 @@ Olivant.prototype.set = function set( property, value ){
 	*/
 
 	if( arguments.length == 1 &&
-		typeof arguments[ 0 ] == "object" )
+		protype( arguments[ 0 ], OBJECT ) )
 	{
-		var option = arguments[ 0 ];
-		for( var property in option ){
+		let option = arguments[ 0 ];
+		for( let property in option ){
 			this.set( property, option[ property ] );
 		}
 
 		return this;
 	}
 
-	if( typeof property != "string" ){
+	if( !protype( property, STRING ) ){
 		this.reset( Issue, true )
 			.silence( )
 			.prompt( "invalid property", property );
@@ -463,7 +463,7 @@ Olivant.prototype.set = function set( property, value ){
 		return this;
 	}
 
-	if( typeof property == "string" &&
+	if( protype( property, STRING ) &&
 		property != LOG  &&
 		property != SILENT &&
 		property != CONTEXT )
