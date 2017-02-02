@@ -1,6 +1,5 @@
 "use strict";
 
-const Olivant = require( "./olivant.js" );
+require( "./index.js" );
 
-let warning = Warning( "empty name", { "name": "simple" } )
-.prompt( "cannot set name" )
+Warning( "empty name", { "name": "simple" } ).prompt( "cannot set name" )
