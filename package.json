@@ -1,9 +1,9 @@
 {
   "name": "olivant",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Echo the destruction caused by your code.",
   "main": "index.js",
-  "support": "olivant.support.js",
+  "support": "browser.js",
   "deploy": "olivant.deploy.js",
   "browser": "olivant.deploy.js",
   "scripts": {
