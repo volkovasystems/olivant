@@ -1,6 +1,6 @@
 {
   "name": "olivant",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Echo the destruction caused by your code.",
   "main": "olivant.deploy.js",
   "authors": [
@@ -41,7 +41,7 @@
     "falze": "^0.5.0",
     "falzy": "^0.10.0",
     "filled": "^0.6.0",
-    "glucose": "^0.10.0",
+    "glucose": "^0.11.0",
     "harden": "^0.14.0",
     "heredito": "^0.17.0",
     "kein": "^0.8.0",
