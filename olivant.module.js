@@ -127,6 +127,8 @@ const redsea = require( "redsea" );
 const segway = require( "segway" );
 const util = require( "util" );
 const trace = require( "stack-trace" );
+
+if( process.env.NODE_ENV !== "production" ){ require( "longjohn" ); }
 //: @end-server
 
 const Olivant = diatom( "Olivant" );
@@ -145,6 +147,8 @@ harden( "SILENT", "silent" );
 	@end-method-documentation
 */
 Olivant.prototype.initialize = function initialize( option ){
+	this.duration = Date.now( );
+
 	if( protype( arguments[ 0 ], OBJECT ) &&
 		!doubt( arguments[ 0 ], ARGUMENTS ) &&
 		!( clazof( arguments[ 0 ], Error ) ) &&
@@ -155,8 +159,6 @@ Olivant.prototype.initialize = function initialize( option ){
 	}else{
 		this.load( );
 	}
-
-	this.getTrace( );
 
 	let parameter = arguments[ 0 ];
 
@@ -285,6 +287,8 @@ Olivant.prototype.valueOf = function valueOf( ){
 Olivant.prototype.getTimestamp = function getTimestamp( ){
 	let timestamp = Ethernity( ).printTime( true );
 
+	timestamp = `${ timestamp } | ${ ( Date.now( ) - this.duration ) }ms`;
+
 	if( asea.server ){
 		return chalk.dim( timestamp );
 	}
@@ -335,7 +339,7 @@ Olivant.prototype.resolveMessage = function resolveMessage( ){
 };
 
 Olivant.prototype.resolveTrace = function resolveTrace( ){
-	let stack = "stack trace not ready";
+	let stack = "stack trace not available";
 
 	if( !this.silent && doubt( this.stack, ARRAY ) && filled( this.stack ) ){
 		stack = this.stack;
@@ -420,18 +424,36 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 	snapd.bind( this )( callback, 1000 );
 
 	if( asea.client ){
-		trace.get( )
-			.then( ( frameList ) => {
-				this.stack = frameList;
+		if( clazof( this.error, Error ) ){
+			trace.fromError( this.error )
+				.then( ( frameList ) => {
+					this.stack = frameList;
 
-				callback( null, this.stack );
-			} )
-			.catch( ( error ) => { callback( this.remind( error ) ); } );
+					callback( null, this.stack );
+				} )
+				.catch( ( error ) => { callback( this.remind( error ) ); } );
+
+		}else if( this.depth > 5 ){
+			trace.get( )
+				.then( ( frameList ) => {
+					this.stack = frameList;
+
+					callback( null, this.stack );
+				} )
+				.catch( ( error ) => { callback( this.remind( error ) ); } );
+		}
 
 	}else if( asea.server ){
-		this.stack = trace.get( );
+		if( clazof( this.error, Error ) ){
+			this.stack = trace.parse( this.error );
 
-		callback( null, this.stack );
+			callback( null, this.stack );
+
+		}else if( this.depth > 5 ){
+			this.stack = trace.get( );
+
+			callback( null, this.stack );
+		}
 	}
 
 	return this;
@@ -625,6 +647,10 @@ const crush = function crush( parameter, option ){
 			.substring( 0, length ) + "...";
 
 	}else if( parameter && clazof( parameter, Error ) && parameter.stack ){
+		this.error = parameter;
+
+		this.getTrace( );
+
 		return parameter.stack.toString( );
 
 	}else if( clazof( parameter, Olivant ) ){
@@ -734,7 +760,7 @@ Olivant.prototype.prompt = function prompt( ){
 			if( doubt( this.stack, ARRAY ) && filled( this.stack ) ){
 				this.log( this.getMessage( ) );
 
-			}else{
+			}else if( this.depth > 5 ){
 				this.getTrace( ( error, stack ) => {
 					if( clazof( error, Error ) ){
 						this.remind( `error getting stack trace, ${ error }` );
@@ -749,6 +775,9 @@ Olivant.prototype.prompt = function prompt( ){
 						this.log( this.getMessage( ) );
 					}
 				} );
+
+			}else{
+				this.log( this.getMessage( ) );
 			}
 		} );
 

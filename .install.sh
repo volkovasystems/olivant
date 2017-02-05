@@ -15,6 +15,7 @@ glucose \
 harden \
 heredito \
 kein \
+longjohn \
 meek \
 outre \
 plough \
