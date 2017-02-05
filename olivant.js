@@ -124,6 +124,8 @@ const redsea = require( "redsea" );
 const segway = require( "segway" );
 const util = require( "util" );
 const trace = require( "stack-trace" );
+
+if( process.env.NODE_ENV !== "production" ){ require( "longjohn" ); }
 //: @end-server
 
 const Olivant = diatom( "Olivant" );
