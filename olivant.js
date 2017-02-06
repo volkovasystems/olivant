@@ -126,10 +126,19 @@ const util = require( "util" );
 const trace = require( "stack-trace" );
 
 if( process.env.NODE_ENV !== "production" ){ require( "longjohn" ); }
+harden( "DEFAULT_REDIRECT_PATH", "/view/status/page" );
 //: @end-server
 
 const Olivant = diatom( "Olivant" );
 
+const DEFAULT_INSPECT_OPTION = { "depth": 1, "length": 200 };
+const DEFAULT_LOG_ENGINE = asea.client? console.debug : console.log;
+
+/*;
+	@note:
+		This is the default name/status and code of the olivant.
+	@end-note
+*/
 harden( "ECHO", "echo" );
 harden( "ECHO_CODE", 200 );
 
@@ -202,18 +211,26 @@ Olivant.prototype.load = function load( option ){
 
 	this.code = option.code || this.code || ECHO_CODE;
 
-	this.log = option.log || this.log || ( ( asea.client )? console.debug : console.log );
+	this.log = option.log || this.log || DEFAULT_LOG_ENGINE;
 
-	if( falze( this.context ) && option.self ){
+	if( falze( this.context ) && truu( option.self ) ){
 		this.context = option.self;
 	}
 
 	this.silent = kein( option, "silent" )? option.silent :
 		kein( this, "silent" )? this.silent : true;
 
+	if( !protype( this.silent, BOOLEAN ) ){
+		this.silent = true;
+	}
+
 	//: Depth dictates refined settings of this procedure.
 	this.depth = kein( option, "depth" )? option.depth :
-		kein( this, "depth" )? this.depth : +this.silent;
+		kein( this, "depth" )? this.depth : 1;
+
+	if( !protype( this.depth, NUMBER ) ){
+		this.depth = 1;
+	}
 
 	//: Depth is only from 1-0 or 1-2345-6789-0.
 	//: Depth 2 is deep silent depth.
@@ -229,7 +246,7 @@ Olivant.prototype.load = function load( option ){
 
 	this.message = option.message || this.message || "";
 
-	this.inspect = option.inspect || this.inspect || { "depth": 1, "length": 200 };
+	this.inspect = option.inspect || this.inspect || DEFAULT_INSPECT_OPTION;
 
 	if( asea.server ){
 		redsea( Issue );
@@ -544,7 +561,7 @@ Olivant.prototype.send = function send( ){
 		segway( {
 			"response": procedure,
 			"path": this.path,
-			"status": this.code,
+			"status": this.status,
 			"data": message,
 		} );
 
@@ -563,7 +580,7 @@ Olivant.prototype.send = function send( ){
 	{
 		segway( {
 			"path": this.path,
-			"status": this.code,
+			"status": this.status,
 			"data": message,
 		} );
 
@@ -621,11 +638,11 @@ Olivant.prototype.report = function report( ){
 };
 
 /*;
-	@static-method-documentation:
+	@internal-method-documentation:
 		Crush the parameter extracting string information.
 
 		Special support for glucose coated parameters.
-	@end-static-method-documentation
+	@end-internal-method-documentation
 */
 const crush = function crush( parameter, option ){
 	option = option || this.inspect || { };
@@ -816,6 +833,7 @@ Olivant.prototype.redirect = function redirect( path ){
 
 Olivant.prototype.flushState = function flushState( ){
 	this.state = "";
+	this.path = "";
 
 	return this;
 };
@@ -845,15 +863,15 @@ Olivant.prototype.pass = function pass( callback, result, option ){
 		return this;
 	}
 
+	if( truu( option ) && truu( option.self ) && option.COATED === COATED ){
+		this.set( CONTEXT, option.self );
+	}
+
 	if( this.context ){
 		callback = called.bind( this.context )( callback );
 
 	}else{
 		callback = called( callback );
-	}
-
-	if( truu( option ) && truu( option.self ) && option.COATED === COATED ){
-		this.set( CONTEXT, option.self );
 	}
 
 	callback( this, result, option );
@@ -862,18 +880,18 @@ Olivant.prototype.pass = function pass( callback, result, option ){
 };
 
 harden( "create", function create( name, option ){
-	let Clone = diatom( name );
+	let LogEngine = diatom( name );
 
-	heredito( Clone, Olivant );
+	heredito( LogEngine, Olivant );
 
-	Clone.prototype.name = option.name;
-	Clone.prototype.status = option.status;
-	Clone.prototype.code = option.code;
-	Clone.prototype.silent = option.silent;
-	Clone.prototype.depth = option.depth;
-	Clone.prototype.color = option.color;
-	Clone.prototype.inspect = option.inspect;
-	Clone.prototype.initialize = option.initialize ||
+	LogEngine.prototype.name = option.name;
+	LogEngine.prototype.status = option.status;
+	LogEngine.prototype.code = option.code;
+	LogEngine.prototype.silent = option.silent;
+	LogEngine.prototype.depth = option.depth;
+	LogEngine.prototype.color = option.color;
+	LogEngine.prototype.inspect = option.inspect;
+	LogEngine.prototype.initialize = option.initialize ||
 		function initialize( ){
 			this.name = option.name;
 
@@ -886,9 +904,9 @@ harden( "create", function create( name, option ){
 			this.depth = option.depth;
 		};
 
-	symbiote( Clone );
+	symbiote( LogEngine );
 
-	harden( name, Clone );
+	harden( LogEngine.name, LogEngine );
 }, Olivant );
 
 module.exports = Olivant;
