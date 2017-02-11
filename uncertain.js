@@ -9,7 +9,7 @@ const Olivant = require( "./olivant.js" );
 
 
 harden( "FAILED", "failed" );
-harden( "UNCERTAIN", 404 );
+harden( "UNCERTAIN", "uncertain" );
 harden( "UNCERTAIN_CODE", 404 );
 
 Olivant.create( "Uncertain", {
