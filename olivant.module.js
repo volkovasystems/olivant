@@ -699,7 +699,7 @@ const crush = function crush( parameter, option ){
 	}else if( asea.server ){
 		return util.inspect( parameter, { "depth": depth } )
 			.replace( space, " " )
-			.substring( 0, length );
+			.substring( 0, length ) + "...";
 
 	}else if( asea.client ){
 		return parameter.toString( );
@@ -834,13 +834,24 @@ Olivant.prototype.redirect = function redirect( path ){
 	this.state = REDIRECT;
 	this.path = path;
 
-	if( !this.path && protype( DEFAULT_REDIRECT_PATH, STRING ) ){
+	if( falzy( this.path ) &&
+		truly( DEFAULT_REDIRECT_PATH ) &&
+		protype( DEFAULT_REDIRECT_PATH, STRING ) )
+	{
 		this.path = DEFAULT_REDIRECT_PATH;
 
-	}else{
+		return this;
+	}
+
+	if( !protype( this.path, STRING ) ){
 		this.reset( Issue, true )
 			.silence( )
-			.prompt( "empty path to be redirected" );
+			.prompt( "invalid redirect path" );
+
+	}else if( falzy( this.path ) ){
+		this.reset( Issue, true )
+			.silence( )
+			.prompt( "empty redirect path" );
 	}
 
 	return this;
