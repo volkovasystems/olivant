@@ -284,10 +284,13 @@ Olivant.prototype.reset = function reset( option, renew ){
 	}else if( protype( option, OBJECT ) ){
 		this.load( option );
 
-	}else{
+	}else if( !clazof( option, Issue ) ){
 		this.reset( Issue, true )
 			.silence( )
 			.prompt( "cannot reset to given option", option );
+
+	}else{
+		Issue( "cannot reset log", option, this ).silence( ).prompt( );
 	}
 
 	return this;
@@ -361,7 +364,16 @@ Olivant.prototype.resolveTrace = function resolveTrace( ){
 	if( !this.silent && doubt( this.stack, ARRAY ) && filled( this.stack ) ){
 		stack = this.stack;
 
-		stack = stack.map( ( frame ) => { return frame.toString( ); } );
+		stack = stack.map( ( frame ) => {
+			if( frame.toString( ) === "[object Object]" ){
+				let { functionName, fileName, lineNumber, columnNumber } = frame;
+
+				return `${ functionName } (${ fileName }:${ lineNumber }:${ columnNumber })`;
+
+			}else{
+				return frame.toString( );
+			}
+		} );
 
 		stack = U200b( stack ).join( "\n" );
 

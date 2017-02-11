@@ -7,30 +7,33 @@ const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 module.exports = {
 	"entry": "./browser.js",
 	"resolve": {
-			"descriptionFiles": [
-				".bower.json",
-				"bower.json",
-				"package.json"
-			],
-			"modules": [
-				"bower_components",
-				"node_modules"
-			],
-			"mainFields": [
-				"support",
-				"browser",
-				"module",
-				"main"
-			]
+		"descriptionFiles": [
+			"package.json",
+			"bower.json"
+		],
+		"modules": [
+			"node_modules",
+			"bower_components"
+		],
+		"mainFields": [
+			"support",
+			"browser",
+			"module",
+			"main"
+		],
+		"alias": {
+			"handlebars": "handlebars/dist/handlebars.js",
+			"stacktrace-js": "stacktrace-js/dist/stacktrace.js"
+		}
 	},
 	"module": {
-			"rules": [
-				{
-					"enforce": "pre",
-					"test": /\.support\.js$/,
-					"loader": "source-map-loader"
-				}
-			]
+		"rules": [
+			{
+				"enforce": "pre",
+				"test": /\.support\.js$/,
+				"loader": "source-map-loader"
+			}
+		]
 	},
 	"output": {
 		"library": "olivant",
@@ -39,15 +42,15 @@ module.exports = {
 	},
 	"plugins": [
 		new UglifyJsPlugin( {
-				"compress": {
-						"keep_fargs": true,
-						"keep_fnames": true,
-						"warnings": false
-				},
-				"comments": false,
-				"sourceMap": true,
-				"mangle": false
+			"compress": {
+					"keep_fargs": true,
+					"keep_fnames": true,
+					"warnings": false
+			},
+			"comments": false,
+			"sourceMap": true,
+			"mangle": false
 		} )
 	],
-	"devtool": "#inline-source-map"
+	"devtool": "#cheap-module-inline-source-map"
 };
