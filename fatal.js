@@ -30,7 +30,9 @@ Olivant.create( "Fatal", {
 		this.report( );
 
 		if( asea.server ){
-			dexist( "node" );
+			Prompt( `process ${ process.pid } terminating` );
+
+			dexist( process.pid );
 		}
 
 		return this;

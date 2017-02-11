@@ -368,7 +368,7 @@ Olivant.prototype.resolveTrace = function resolveTrace( ){
 			if( frame.toString( ) === "[object Object]" ){
 				let { functionName, fileName, lineNumber, columnNumber } = frame;
 
-				return `${ functionName } (${ fileName }:${ lineNumber }:${ columnNumber })`;
+				return `${ functionName } (${ fileName }:${ lineNumber }:${ columnNumber })`.trim( );
 
 			}else{
 				return frame.toString( );
@@ -470,6 +470,9 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 					callback( null, this.stack );
 				} )
 				.catch( ( error ) => { callback( this.remind( error ) ); } );
+
+		}else{
+			callback( );
 		}
 
 	}else if( asea.server ){
@@ -482,6 +485,9 @@ Olivant.prototype.getTrace = function getTrace( callback ){
 			this.stack = trace.get( );
 
 			callback( null, this.stack );
+
+		}else{
+			callback( );
 		}
 	}
 

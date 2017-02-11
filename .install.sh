@@ -5,6 +5,7 @@ asea \
 budge \
 called \
 clazof \
+dexist \
 diatom \
 doubt \
 ethernity \
