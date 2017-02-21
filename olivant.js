@@ -116,6 +116,7 @@ const U200b = require( "u200b" );
 
 //: @server:
 const blacksea = require( "blacksea" );
+const bluesea = require( "bluesea" );
 const chalk = require( "chalk" );
 const dexist = require( "dexist" );
 const EventEmitter = require( "events" );
@@ -248,10 +249,17 @@ Olivant.prototype.load = function load( option ){
 
 	this.inspect = option.inspect || this.inspect || DEFAULT_INSPECT_OPTION;
 
+	/*;
+		@note:
+			These are automatice contingency handlers.
+		@end-note
+	*/
 	if( asea.server ){
 		redsea( Issue );
 
 		blacksea( Fatal );
+
+		bluesea( Fatal );
 	}
 
 	return this;
