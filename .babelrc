@@ -1,6 +1,6 @@
 {
 	"presets": "latest",
 	"plugins": [ "transform-runtime" ],
-	"sourceMaps": "both",
+	"sourceMaps": true,
 	"retainLines": true
 }

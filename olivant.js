@@ -434,11 +434,20 @@ Olivant.prototype.resolveTrace = function resolveTrace( ){
 	@end-method-documentation
 */
 Olivant.prototype.getMessage = function getMessage( ){
-	return U200b( [
-		this.getTimestamp( ),
-		this.resolveMessage( ),
-		this.resolveTrace( )
-	] ).join( "\n" );
+	if( asea.server ){
+		return U200b( [
+			this.getTimestamp( ),
+			this.resolveMessage( ),
+			this.resolveTrace( )
+		] ).join( "\n" );
+
+	}else{
+		return U200b( U200b( [
+			this.getTimestamp( ),
+			this.resolveMessage( ),
+			this.resolveTrace( )
+		] ).join( "\n" ) ).raw( );
+	}
 };
 
 /*;
