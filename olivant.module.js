@@ -119,6 +119,7 @@ harden( "DEFAULT_REDIRECT_PATH", window.DEFAULT_REDIRECT_PATH || "/view/status/p
 
 //: @server:
 const blacksea = require( "blacksea" );
+const bluesea = require( "bluesea" );
 const chalk = require( "chalk" );
 const dexist = require( "dexist" );
 const EventEmitter = require( "events" );
@@ -251,10 +252,17 @@ Olivant.prototype.load = function load( option ){
 
 	this.inspect = option.inspect || this.inspect || DEFAULT_INSPECT_OPTION;
 
+	/*;
+		@note:
+			These are automatice contingency handlers.
+		@end-note
+	*/
 	if( asea.server ){
 		redsea( Issue );
 
 		blacksea( Fatal );
+
+		bluesea( Fatal );
 	}
 
 	return this;
@@ -429,11 +437,20 @@ Olivant.prototype.resolveTrace = function resolveTrace( ){
 	@end-method-documentation
 */
 Olivant.prototype.getMessage = function getMessage( ){
-	return U200b( [
-		this.getTimestamp( ),
-		this.resolveMessage( ),
-		this.resolveTrace( )
-	] ).join( "\n" );
+	if( asea.server ){
+		return U200b( [
+			this.getTimestamp( ),
+			this.resolveMessage( ),
+			this.resolveTrace( )
+		] ).join( "\n" );
+
+	}else{
+		return U200b( U200b( [
+			this.getTimestamp( ),
+			this.resolveMessage( ),
+			this.resolveTrace( )
+		] ).join( "\n" ) ).raw( );
+	}
 };
 
 /*;

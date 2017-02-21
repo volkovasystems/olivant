@@ -2,8 +2,11 @@ yarn add \
 babel-runtime \
 arid \
 asea \
+blacksea \
+bluesea \
 budge \
 called \
+chalk \
 clazof \
 dexist \
 diatom \
@@ -27,9 +30,6 @@ symbiote \
 truly \
 truu \
 u200b \
-blacksea \
-chalk \
-dexist \
 redsea \
 segway \
 stack-trace \
@@ -77,4 +77,5 @@ symbiote \
 truly \
 truu \
 u200b \
---save
+--save \
+--force-latest

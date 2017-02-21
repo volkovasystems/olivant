@@ -34,9 +34,9 @@ gulp.task( "client", function formatServer( ){
 				path.basename = path.basename.replace( ".module", ".support" );
 				return path;
 			} ) )
-			.pipe( sourcemap.init( { "identityMap": true } ) )
+			.pipe( sourcemap.init( ) )
 			.pipe( babel( ) )
-			.pipe( sourcemap.write( { "includeContent": true } ) )
+			.pipe( sourcemap.write( "./" ) )
 			.pipe( gulp.dest( "./" ) );
 	} );
 } );
