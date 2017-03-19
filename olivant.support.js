@@ -207,16 +207,16 @@ Olivant.prototype.load = function load(option) {
 		this.context = option.self;
 	}
 
-	this.silent = kein(option, "silent") ? option.silent :
-	kein(this, "silent") ? this.silent : true;
+	this.silent = kein("silent", option) ? option.silent :
+	kein("silent", this) ? this.silent : true;
 
 	if (!protype(this.silent, BOOLEAN)) {
 		this.silent = true;
 	}
 
 	//: Depth dictates refined settings of this procedure.
-	this.depth = kein(option, "depth") ? option.depth :
-	kein(this, "depth") ? this.depth : 1;
+	this.depth = kein("depth", option) ? option.depth :
+	kein("depth", this) ? this.depth : 1;
 
 	if (!protype(this.depth, NUMBER)) {
 		this.depth = 1;
@@ -316,7 +316,7 @@ Olivant.prototype.colorMessage = function colorMessage(color, message) {
 			return color(message);
 
 		} else if (protype(color, STRING) && truly(color)) {
-			if (kein(chalk, color) && protype(chalk[color], FUNCTION)) {
+			if (kein(color, chalk) && protype(chalk[color], FUNCTION)) {
 				return chalk[color](message);
 
 			} else {
