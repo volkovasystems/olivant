@@ -26,6 +26,7 @@ plough \
 protype \
 raze \
 snapd \
+stringe \
 symbiote \
 truly \
 truu \
@@ -72,6 +73,7 @@ plough \
 protype \
 raze \
 snapd \
+stringe \
 stacktrace-js \
 symbiote \
 truly \
