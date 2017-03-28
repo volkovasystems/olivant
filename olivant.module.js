@@ -107,6 +107,7 @@ const plough = require( "plough" );
 const protype = require( "protype" );
 const raze = require( "raze" );
 const snapd = require( "snapd" );
+const stringe = require( "stringe" );
 const symbiote = require( "symbiote" );
 const truly = require( "truly" );
 const truu = require( "truu" );
@@ -373,13 +374,13 @@ Olivant.prototype.resolveTrace = function resolveTrace( ){
 		stack = this.stack;
 
 		stack = stack.map( ( frame ) => {
-			if( frame.toString( ) === "[object Object]" ){
+			if( stringe( frame ) === "[object Object]" ){
 				let { functionName, fileName, lineNumber, columnNumber } = frame;
 
 				return `${ functionName } (${ fileName }:${ lineNumber }:${ columnNumber })`.trim( );
 
 			}else{
-				return frame.toString( );
+				return stringe( frame );
 			}
 		} );
 
@@ -586,7 +587,7 @@ Olivant.prototype.send = function send( ){
 		return this;
 	}
 
-	let message = meek( this.status, U200b( this.toString( ) ).raw( ) );
+	let message = meek( this.status, U200b( stringe( this ) ).raw( ) );
 
 	let procedure = arguments[ 0 ];
 
@@ -703,13 +704,13 @@ const crush = function crush( parameter, option ){
 
 		this.getTrace( );
 
-		return parameter.stack.toString( );
+		return stringe( parameter.stack );
 
 	}else if( clazof( parameter, Olivant ) ){
 		return parameter.message;
 
 	}else if( protype( parameter, FUNCTION ) ){
-		return parameter.toString( )
+		return stringe( parameter )
 			.replace( space, " " )
 			.substring( 0, length ) + "...";
 
@@ -717,7 +718,7 @@ const crush = function crush( parameter, option ){
 		protype( parameter, NUMBER ) ||
 		protype( parameter, BOOLEAN ) )
 	{
-		return parameter.toString( );
+		return stringe( parameter );
 
 	}else if( asea.server ){
 		return util.inspect( parameter, { "depth": depth } )
@@ -725,10 +726,10 @@ const crush = function crush( parameter, option ){
 			.substring( 0, length ) + "...";
 
 	}else if( asea.client ){
-		return parameter.toString( );
+		return stringe( parameter );
 
 	}else{
-		return parameter.toString( );
+		return stringe( parameter );
 	}
 };
 
