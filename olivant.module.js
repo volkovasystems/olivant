@@ -954,7 +954,7 @@ harden( "create", function create( name, option ){
 			this.depth = option.depth;
 		};
 
-	symbiote( LogEngine );
+	symbiote( LogEngine, Olivant );
 
 	harden( LogEngine.name, LogEngine );
 }, Olivant );
