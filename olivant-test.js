@@ -1,5 +1,3 @@
-"use strict";
-
 require( "./index.js" );
 
 Warning( "empty name", { "reserverName": "" } )
