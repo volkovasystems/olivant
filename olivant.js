@@ -929,7 +929,7 @@ Olivant.prototype.pass = function pass( callback, result, option ){
 harden( "create", function create( name, option ){
 	let LogEngine = diatom( name );
 
-	heredito( LogEngine, Olivant );
+	LogEngine = heredito( LogEngine, Olivant );
 
 	LogEngine.prototype.name = option.name;
 	LogEngine.prototype.status = option.status;
@@ -951,7 +951,7 @@ harden( "create", function create( name, option ){
 			this.depth = option.depth;
 		};
 
-	symbiote( LogEngine );
+	symbiote( LogEngine, Olivant );
 
 	harden( LogEngine.name, LogEngine );
 }, Olivant );
