@@ -2,7 +2,7 @@
 
 require( "./index.js" );
 
-Warning( "empty name", { "name": "" } ).prompt( "cannot set name" );
+Warning( "empty name", { "reserverName": "" } ).remind( "unable to create booking" ).prompt( "cannot set name" );
 
 Prompt( "empty title", { "title": "" } ).prompt( "cannot set title" );
 
